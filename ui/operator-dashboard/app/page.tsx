@@ -1,10 +1,16 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { ReviewQueue } from "@/components/ReviewQueue/ReviewQueue";
 import { AlertPanel } from "@/components/AlertPanel/AlertPanel";
 import { StatsOverview } from "@/components/StatsOverview";
+import { UserExplorer } from "@/components/UserExplorer";
+
+type TabType = "review" | "explorer";
 
 export default function OperatorDashboard() {
   const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
+  const [activeTab, setActiveTab] = useState<TabType>("review");
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -47,19 +53,54 @@ export default function OperatorDashboard() {
       {/* Alert Banner */}
       <AlertPanel />
 
+      {/* Tab Navigation */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="flex space-x-8" aria-label="Tabs">
+            <button
+              onClick={() => setActiveTab("review")}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === "review"
+                  ? "border-indigo-500 text-indigo-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              Review Queue
+            </button>
+            <button
+              onClick={() => setActiveTab("explorer")}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === "explorer"
+                  ? "border-indigo-500 text-indigo-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              User Explorer
+            </button>
+          </nav>
+        </div>
+      </div>
+
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-12 gap-6">
-          {/* Left Sidebar - Stats */}
-          <div className="col-span-3">
-            <StatsOverview />
-          </div>
+        {activeTab === "review" ? (
+          <div className="grid grid-cols-12 gap-6">
+            {/* Left Sidebar - Stats */}
+            <div className="col-span-3">
+              <StatsOverview />
+            </div>
 
-          {/* Main Content - Review Queue */}
-          <div className="col-span-9">
-            <ReviewQueue />
+            {/* Main Content - Review Queue */}
+            <div className="col-span-9">
+              <ReviewQueue />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div>
+            {/* User Explorer View */}
+            <UserExplorer />
+          </div>
+        )}
       </main>
     </div>
   );
