@@ -1,0 +1,23 @@
+# Core Dependencies for SpendSense Data Foundation
+# Python 3.10+
+
+# Data manipulation and generation
+pandas>=2.0.0
+numpy>=1.24.0
+faker>=20.0.0
+
+# Database
+sqlite3  # Built-in to Python, included for documentation
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Future dependencies (for later phases)
+# fastapi>=0.104.0
+# openai>=1.0.0
+# sentence-transformers>=2.2.0
+# pydantic>=2.0.0
+# sqlalchemy>=2.0.0
+# uvicorn>=0.24.0
+
