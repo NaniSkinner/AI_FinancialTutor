@@ -1,855 +1,888 @@
-# SHARD 7: Stats, Alerts & Polish
+# SHARD 6: Backend & Operator Actions
 
 **Project:** SpendSense Operator Dashboard  
-**Purpose:** Dashboard metrics, alert system, performance optimization, and final integration  
-**Phase:** Final Integration & Polish  
-**Estimated Size:** ~10% of total implementation + testing  
-**Dependencies:** All previous shards (1-6)
+**Purpose:** Backend API implementation for all operator actions and data management  
+**Phase:** Backend Implementation  
+**Estimated Size:** ~20% of total implementation  
+**Dependencies:** Shard 1 (Foundation)
 
 ---
 
 ## Overview
 
-This final shard brings together all components with the alert system, performance optimizations, comprehensive testing, and production readiness. It also includes keyboard shortcuts, accessibility improvements, and monitoring.
+This shard implements the Python backend API that powers the Operator Dashboard. It includes all operator actions (approve, reject, modify, flag), data schemas, audit logging, and API endpoints.
 
 ---
 
-## Alert System
+## Technology Stack
 
-### Alert Panel Component
+- **API Framework**: FastAPI (recommended) or Flask
+- **Database**: SQLite (dev), PostgreSQL (production)
+- **ORM**: SQLAlchemy (optional, or raw SQL)
+- **Authentication**: JWT tokens (simple for prototype)
 
-Create `/components/AlertPanel/AlertPanel.tsx`:
+---
 
-```tsx
-import React from "react";
-import { useAlerts } from "@/hooks/useAlerts";
-import { AlertItem } from "./AlertItem";
+## Project Structure
 
-export function AlertPanel() {
-  const { data: alerts, mutate } = useAlerts();
-
-  if (!alerts || alerts.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className="bg-yellow-50 border-b border-yellow-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0">
-            <span className="text-yellow-600 text-xl">⚠️</span>
-          </div>
-
-          <div className="flex-1 space-y-2">
-            {alerts.map((alert) => (
-              <AlertItem key={alert.id} alert={alert} onDismiss={mutate} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 ```
-
-### Alert Item Component
-
-Create `/components/AlertPanel/AlertItem.tsx`:
-
-```tsx
-import React from "react";
-import { Badge } from "@/components/Common/Badge";
-import type { Alert } from "@/lib/types";
-
-interface Props {
-  alert: Alert;
-  onDismiss?: () => void;
-}
-
-export function AlertItem({ alert, onDismiss }: Props) {
-  const getSeverityColor = () => {
-    switch (alert.severity) {
-      case "high":
-        return "bg-red-100 text-red-800 border-red-300";
-      case "medium":
-        return "bg-yellow-100 text-yellow-800 border-yellow-300";
-      case "low":
-        return "bg-blue-100 text-blue-800 border-blue-300";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
-    }
-  };
-
-  return (
-    <div
-      className={`flex items-center justify-between p-3 rounded-lg border ${getSeverityColor()}`}
-    >
-      <div className="flex items-center gap-3 flex-1">
-        <Badge variant="outline" className="uppercase text-xs">
-          {alert.type.replace(/_/g, " ")}
-        </Badge>
-
-        <span className="text-sm font-medium">{alert.message}</span>
-
-        {alert.count && <span className="text-xs">({alert.count} items)</span>}
-      </div>
-
-      {alert.actionUrl && (
-        <a
-          href={alert.actionUrl}
-          className="text-sm font-medium underline hover:no-underline ml-4"
-        >
-          View →
-        </a>
-      )}
-    </div>
-  );
-}
-```
-
-### useAlerts Hook
-
-Create `/hooks/useAlerts.ts`:
-
-```typescript
-import useSWR from "swr";
-import { fetchAlerts } from "@/lib/api";
-import type { Alert } from "@/lib/types";
-
-export function useAlerts() {
-  const { data, error, isLoading, mutate } = useSWR<Alert[]>(
-    "/api/operator/alerts",
-    fetchAlerts,
-    {
-      refreshInterval: 60000, // Refresh every minute
-      revalidateOnFocus: true,
-    }
-  );
-
-  return {
-    data,
-    error,
-    isLoading,
-    mutate,
-  };
-}
+/api
+├── main.py                      # FastAPI app entry point
+├── models.py                    # Database models
+├── schemas.py                   # Pydantic schemas
+├── database.py                  # Database connection
+├── operator_actions.py          # Core operator logic
+├── recommendations.py           # Recommendation endpoints
+├── users.py                     # User signal endpoints
+├── audit.py                     # Audit logging
+└── requirements.txt             # Python dependencies
 ```
 
 ---
 
-## Alert Generation Logic (Backend)
+## Database Schema
 
-Add to `/api/alerts.py`:
+### Recommendations Table
+
+```sql
+CREATE TABLE recommendations (
+    recommendation_id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    persona_primary TEXT NOT NULL,
+    persona_secondary TEXT,
+    type TEXT NOT NULL,                    -- 'article', 'video', 'tool', 'quiz'
+    title TEXT NOT NULL,
+    rationale TEXT NOT NULL,
+    priority TEXT NOT NULL,                -- 'high', 'medium', 'low'
+    status TEXT NOT NULL DEFAULT 'pending', -- 'pending', 'approved', 'rejected', 'flagged'
+    content_url TEXT,
+    read_time_minutes INTEGER,
+
+    -- Guardrails
+    tone_check BOOLEAN NOT NULL,
+    advice_check BOOLEAN NOT NULL,
+    eligibility_check BOOLEAN NOT NULL,
+    guardrails_passed BOOLEAN NOT NULL,
+
+    -- Operator actions
+    approved_by TEXT,
+    approved_at TIMESTAMP,
+    rejected_by TEXT,
+    rejected_at TIMESTAMP,
+    modified_by TEXT,
+    modified_at TIMESTAMP,
+    operator_notes TEXT,
+
+    -- Timestamps
+    generated_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- Indexes
+CREATE INDEX idx_recommendations_status ON recommendations(status);
+CREATE INDEX idx_recommendations_user_id ON recommendations(user_id);
+CREATE INDEX idx_recommendations_priority ON recommendations(priority);
+CREATE INDEX idx_recommendations_persona ON recommendations(persona_primary);
+CREATE INDEX idx_recommendations_created_at ON recommendations(created_at DESC);
+```
+
+### Operator Audit Log Table
+
+```sql
+CREATE TABLE operator_audit_log (
+    audit_id TEXT PRIMARY KEY,
+    operator_id TEXT NOT NULL,
+    action TEXT NOT NULL,              -- 'approve', 'reject', 'modify', 'flag'
+    recommendation_id TEXT NOT NULL,
+    metadata JSON,                     -- Additional context
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (recommendation_id) REFERENCES recommendations(recommendation_id)
+);
+
+-- Indexes
+CREATE INDEX idx_audit_operator ON operator_audit_log(operator_id);
+CREATE INDEX idx_audit_action ON operator_audit_log(action);
+CREATE INDEX idx_audit_timestamp ON operator_audit_log(timestamp DESC);
+CREATE INDEX idx_audit_recommendation ON operator_audit_log(recommendation_id);
+```
+
+### Recommendation Flags Table
+
+```sql
+CREATE TABLE recommendation_flags (
+    flag_id TEXT PRIMARY KEY,
+    recommendation_id TEXT NOT NULL,
+    flagged_by TEXT NOT NULL,          -- operator_id
+    flag_reason TEXT NOT NULL,
+    resolved BOOLEAN DEFAULT FALSE,
+    resolved_by TEXT,
+    resolved_at TIMESTAMP,
+    flagged_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (recommendation_id) REFERENCES recommendations(recommendation_id)
+);
+
+-- Indexes
+CREATE INDEX idx_flags_recommendation ON recommendation_flags(recommendation_id);
+CREATE INDEX idx_flags_resolved ON recommendation_flags(resolved);
+```
+
+### Decision Traces Table
+
+```sql
+CREATE TABLE decision_traces (
+    trace_id TEXT PRIMARY KEY,
+    recommendation_id TEXT NOT NULL UNIQUE,
+
+    -- Timestamps for each step
+    signals_detected_at TIMESTAMP NOT NULL,
+    persona_assigned_at TIMESTAMP NOT NULL,
+    content_matched_at TIMESTAMP NOT NULL,
+    rationale_generated_at TIMESTAMP NOT NULL,
+    guardrails_checked_at TIMESTAMP NOT NULL,
+
+    -- Signal data
+    signals_json JSON NOT NULL,
+
+    -- Persona assignment
+    persona_assignment_json JSON NOT NULL,
+
+    -- Content matching
+    content_matches_json JSON NOT NULL,
+    relevance_scores_json JSON NOT NULL,
+
+    -- LLM details
+    llm_model TEXT NOT NULL,
+    temperature REAL NOT NULL,
+    tokens_used INTEGER NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (recommendation_id) REFERENCES recommendations(recommendation_id)
+);
+
+CREATE INDEX idx_traces_recommendation ON decision_traces(recommendation_id);
+```
+
+---
+
+## FastAPI Implementation
+
+### Main Application
+
+Create `/api/main.py`:
 
 ```python
-from fastapi import APIRouter, Depends
-from typing import List
-import sqlite3
-from datetime import datetime, timedelta
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional, List
+import uvicorn
 
 from database import get_db
+from operator_actions import OperatorActions
+import schemas
+
+app = FastAPI(title="SpendSense Operator Dashboard API")
+
+# CORS middleware for frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+def root():
+    return {"message": "SpendSense Operator Dashboard API"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
+# Import routers
+from recommendations import router as recommendations_router
+from users import router as users_router
+from audit import router as audit_router
+
+app.include_router(recommendations_router, prefix="/api/operator")
+app.include_router(users_router, prefix="/api/operator")
+app.include_router(audit_router, prefix="/api/operator")
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+```
+
+---
+
+### Database Connection
+
+Create `/api/database.py`:
+
+```python
+import sqlite3
+from contextlib import contextmanager
+import os
+
+DATABASE_URL = os.getenv("DATABASE_URL", "spendsense_operator.db")
+
+def get_db_connection():
+    conn = sqlite3.connect(DATABASE_URL)
+    conn.row_factory = sqlite3.Row  # Return rows as dictionaries
+    return conn
+
+@contextmanager
+def get_db():
+    conn = get_db_connection()
+    try:
+        yield conn
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        conn.close()
+
+def init_database():
+    """Initialize database with schema"""
+    with get_db() as conn:
+        # Read and execute schema.sql
+        with open("schema.sql", "r") as f:
+            conn.executescript(f.read())
+```
+
+---
+
+### Pydantic Schemas
+
+Create `/api/schemas.py`:
+
+```python
+from pydantic import BaseModel
+from typing import Optional, List, Dict, Any
+from datetime import datetime
+
+class GuardrailChecks(BaseModel):
+    tone_check: bool
+    advice_check: bool
+    eligibility_check: bool
+
+class Recommendation(BaseModel):
+    id: str
+    user_id: str
+    persona_primary: str
+    persona_secondary: Optional[str] = None
+    type: str
+    title: str
+    rationale: str
+    priority: str
+    status: str
+    content_url: Optional[str] = None
+    read_time_minutes: Optional[int] = None
+    guardrails_passed: GuardrailChecks
+    generated_at: str
+    approved_by: Optional[str] = None
+    approved_at: Optional[str] = None
+    operator_notes: Optional[str] = None
+
+class ApproveRequest(BaseModel):
+    notes: str = ""
+
+class RejectRequest(BaseModel):
+    reason: str
+
+class ModifyRequest(BaseModel):
+    rationale: Optional[str] = None
+    priority: Optional[str] = None
+    title: Optional[str] = None
+
+class FlagRequest(BaseModel):
+    reason: str
+
+class BulkApproveRequest(BaseModel):
+    recommendation_ids: List[str]
+    notes: str = ""
+
+class BulkApproveResponse(BaseModel):
+    total: int
+    approved: int
+    failed: int
+    approved_ids: List[str]
+    failed_items: List[Dict[str, str]]
+
+class OperatorStats(BaseModel):
+    pending: int
+    approved_today: int
+    rejected_today: int
+    flagged: int
+    avg_review_time_seconds: float
+```
+
+---
+
+### Operator Actions Logic
+
+Create `/api/operator_actions.py`:
+
+```python
+from datetime import datetime
+from typing import Dict, List, Optional
+import json
+import sqlite3
+
+class OperatorActions:
+    def __init__(self, db_connection: sqlite3.Connection):
+        self.db = db_connection
+
+    def approve_recommendation(self, operator_id: str, recommendation_id: str,
+                              notes: str = "") -> Dict:
+        """
+        Approve recommendation for sending to user
+
+        Steps:
+        1. Verify operator has permission
+        2. Mark recommendation as approved
+        3. Log operator action
+        4. Queue for user delivery
+        """
+        cursor = self.db.cursor()
+
+        # Update recommendation status
+        cursor.execute("""
+            UPDATE recommendations
+            SET status = 'approved',
+                approved_by = ?,
+                approved_at = ?,
+                operator_notes = ?,
+                updated_at = ?
+            WHERE recommendation_id = ?
+        """, (
+            operator_id,
+            datetime.now().isoformat(),
+            notes,
+            datetime.now().isoformat(),
+            recommendation_id
+        ))
+
+        # Log action
+        self._log_operator_action(
+            operator_id,
+            'approve',
+            recommendation_id,
+            {'notes': notes}
+        )
+
+        # Queue for delivery (placeholder)
+        self._queue_for_delivery(recommendation_id)
+
+        self.db.commit()
+
+        return {
+            'status': 'approved',
+            'recommendation_id': recommendation_id,
+            'approved_by': operator_id,
+            'approved_at': datetime.now().isoformat()
+        }
+
+    def reject_recommendation(self, operator_id: str, recommendation_id: str,
+                             reason: str) -> Dict:
+        """
+        Reject recommendation (will not be sent to user)
+        """
+        cursor = self.db.cursor()
+
+        cursor.execute("""
+            UPDATE recommendations
+            SET status = 'rejected',
+                rejected_by = ?,
+                rejected_at = ?,
+                operator_notes = ?,
+                updated_at = ?
+            WHERE recommendation_id = ?
+        """, (
+            operator_id,
+            datetime.now().isoformat(),
+            reason,
+            datetime.now().isoformat(),
+            recommendation_id
+        ))
+
+        self._log_operator_action(
+            operator_id,
+            'reject',
+            recommendation_id,
+            {'reason': reason}
+        )
+
+        self.db.commit()
+
+        return {
+            'status': 'rejected',
+            'recommendation_id': recommendation_id,
+            'rejected_by': operator_id,
+            'reason': reason
+        }
+
+    def modify_recommendation(self, operator_id: str, recommendation_id: str,
+                             modifications: Dict) -> Dict:
+        """
+        Modify rationale, priority, or other fields before approval
+        """
+        cursor = self.db.cursor()
+        allowed_fields = ['rationale', 'priority', 'title']
+
+        for field, new_value in modifications.items():
+            if field not in allowed_fields:
+                continue
+
+            cursor.execute(f"""
+                UPDATE recommendations
+                SET {field} = ?,
+                    modified_by = ?,
+                    modified_at = ?,
+                    updated_at = ?
+                WHERE recommendation_id = ?
+            """, (
+                new_value,
+                operator_id,
+                datetime.now().isoformat(),
+                datetime.now().isoformat(),
+                recommendation_id
+            ))
+
+        self._log_operator_action(
+            operator_id,
+            'modify',
+            recommendation_id,
+            {'modifications': modifications}
+        )
+
+        self.db.commit()
+
+        return {
+            'status': 'modified',
+            'recommendation_id': recommendation_id,
+            'modifications': modifications
+        }
+
+    def flag_for_review(self, operator_id: str, recommendation_id: str,
+                       flag_reason: str) -> Dict:
+        """
+        Flag recommendation for senior operator or additional review
+        """
+        cursor = self.db.cursor()
+        flag_id = f"flag_{recommendation_id}_{int(datetime.now().timestamp())}"
+
+        cursor.execute("""
+            INSERT INTO recommendation_flags
+            (flag_id, recommendation_id, flagged_by, flag_reason, flagged_at)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            flag_id,
+            recommendation_id,
+            operator_id,
+            flag_reason,
+            datetime.now().isoformat()
+        ))
+
+        # Also update recommendation status
+        cursor.execute("""
+            UPDATE recommendations
+            SET status = 'flagged',
+                updated_at = ?
+            WHERE recommendation_id = ?
+        """, (datetime.now().isoformat(), recommendation_id))
+
+        self._log_operator_action(
+            operator_id,
+            'flag',
+            recommendation_id,
+            {'flag_reason': flag_reason}
+        )
+
+        self.db.commit()
+
+        return {
+            'status': 'flagged',
+            'recommendation_id': recommendation_id,
+            'flag_id': flag_id
+        }
+
+    def bulk_approve(self, operator_id: str, recommendation_ids: List[str],
+                    notes: str = "") -> Dict:
+        """
+        Approve multiple recommendations at once
+
+        Safety checks:
+        - Verify all recommendations are in 'pending' status
+        - Verify all passed guardrail checks
+        - Log each approval individually
+        """
+        approved = []
+        failed = []
+
+        for rec_id in recommendation_ids:
+            try:
+                # Verify recommendation is approvable
+                if not self._can_approve(rec_id):
+                    failed.append({
+                        'recommendation_id': rec_id,
+                        'reason': 'Not in approvable state'
+                    })
+                    continue
+
+                # Approve
+                self.approve_recommendation(operator_id, rec_id, notes)
+                approved.append(rec_id)
+
+            except Exception as e:
+                failed.append({
+                    'recommendation_id': rec_id,
+                    'reason': str(e)
+                })
+
+        return {
+            'total': len(recommendation_ids),
+            'approved': len(approved),
+            'failed': len(failed),
+            'approved_ids': approved,
+            'failed_items': failed
+        }
+
+    def _can_approve(self, recommendation_id: str) -> bool:
+        """Check if recommendation can be approved"""
+        cursor = self.db.cursor()
+
+        cursor.execute("""
+            SELECT status, guardrails_passed
+            FROM recommendations
+            WHERE recommendation_id = ?
+        """, (recommendation_id,))
+
+        row = cursor.fetchone()
+
+        if not row:
+            return False
+
+        status, guardrails = row['status'], row['guardrails_passed']
+
+        # Must be pending and pass all guardrails
+        return status == 'pending' and guardrails
+
+    def _log_operator_action(self, operator_id: str, action: str,
+                            recommendation_id: str, metadata: Dict):
+        """Log operator action to audit table"""
+        audit_id = f"audit_{operator_id}_{int(datetime.now().timestamp())}"
+
+        cursor = self.db.cursor()
+        cursor.execute("""
+            INSERT INTO operator_audit_log
+            (audit_id, operator_id, action, recommendation_id, metadata, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            audit_id,
+            operator_id,
+            action,
+            recommendation_id,
+            json.dumps(metadata),
+            datetime.now().isoformat()
+        ))
+
+    def _queue_for_delivery(self, recommendation_id: str):
+        """Queue recommendation for delivery to user"""
+        # This would integrate with email/notification system
+        # For now, just update status
+        cursor = self.db.cursor()
+        cursor.execute("""
+            UPDATE recommendations
+            SET status = 'queued_for_delivery',
+                updated_at = ?
+            WHERE recommendation_id = ?
+        """, (datetime.now().isoformat(), recommendation_id))
+
+    def get_operator_stats(self, operator_id: str = None) -> Dict:
+        """Get operator activity statistics"""
+        cursor = self.db.cursor()
+
+        # Pending count
+        cursor.execute("SELECT COUNT(*) FROM recommendations WHERE status = 'pending'")
+        pending = cursor.fetchone()[0]
+
+        # Approved today
+        cursor.execute("""
+            SELECT COUNT(*) FROM operator_audit_log
+            WHERE action = 'approve'
+              AND DATE(timestamp) = DATE('now')
+        """)
+        approved_today = cursor.fetchone()[0]
+
+        # Rejected today
+        cursor.execute("""
+            SELECT COUNT(*) FROM operator_audit_log
+            WHERE action = 'reject'
+              AND DATE(timestamp) = DATE('now')
+        """)
+        rejected_today = cursor.fetchone()[0]
+
+        # Flagged items
+        cursor.execute("""
+            SELECT COUNT(*) FROM recommendation_flags
+            WHERE resolved = 0
+        """)
+        flagged = cursor.fetchone()[0]
+
+        return {
+            'pending': pending,
+            'approved_today': approved_today,
+            'rejected_today': rejected_today,
+            'flagged': flagged,
+            'avg_review_time_seconds': 0  # Would calculate from timing data
+        }
+```
+
+---
+
+### Recommendations Endpoints
+
+Create `/api/recommendations.py`:
+
+```python
+from fastapi import APIRouter, HTTPException, Depends
+from typing import Optional, List
+import sqlite3
+
+from database import get_db
+from operator_actions import OperatorActions
+import schemas
 
 router = APIRouter()
 
-@router.get("/alerts")
-def get_alerts(db: sqlite3.Connection = Depends(get_db)):
-    """Generate alerts based on current system state"""
-    alerts = []
+@router.get("/recommendations", response_model=List[schemas.Recommendation])
+def get_recommendations(
+    status: Optional[str] = "pending",
+    persona: Optional[str] = "all",
+    priority: Optional[str] = "all",
+    db: sqlite3.Connection = Depends(get_db)
+):
+    """Get filtered list of recommendations"""
     cursor = db.cursor()
 
-    # Alert: High rejection rate
-    cursor.execute("""
-        SELECT COUNT(*) FROM operator_audit_log
-        WHERE action = 'reject'
-          AND DATE(timestamp) = DATE('now')
-    """)
-    rejected_today = cursor.fetchone()[0]
+    query = "SELECT * FROM recommendations WHERE 1=1"
+    params = []
+
+    if status != "all":
+        query += " AND status = ?"
+        params.append(status)
+
+    if persona != "all":
+        query += " AND persona_primary = ?"
+        params.append(persona)
+
+    if priority != "all":
+        query += " AND priority = ?"
+        params.append(priority)
+
+    query += " ORDER BY created_at DESC LIMIT 100"
+
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+
+    recommendations = []
+    for row in rows:
+        rec = dict(row)
+        rec['id'] = rec.pop('recommendation_id')
+        rec['guardrails_passed'] = {
+            'tone_check': bool(rec.pop('tone_check')),
+            'advice_check': bool(rec.pop('advice_check')),
+            'eligibility_check': bool(rec.pop('eligibility_check'))
+        }
+        recommendations.append(schemas.Recommendation(**rec))
+
+    return recommendations
+
+@router.post("/recommendations/{recommendation_id}/approve")
+def approve_recommendation(
+    recommendation_id: str,
+    request: schemas.ApproveRequest,
+    operator_id: str = "op_001",  # TODO: Get from auth
+    db: sqlite3.Connection = Depends(get_db)
+):
+    """Approve a recommendation"""
+    actions = OperatorActions(db)
+    return actions.approve_recommendation(operator_id, recommendation_id, request.notes)
+
+@router.post("/recommendations/{recommendation_id}/reject")
+def reject_recommendation(
+    recommendation_id: str,
+    request: schemas.RejectRequest,
+    operator_id: str = "op_001",
+    db: sqlite3.Connection = Depends(get_db)
+):
+    """Reject a recommendation"""
+    actions = OperatorActions(db)
+    return actions.reject_recommendation(operator_id, recommendation_id, request.reason)
+
+@router.patch("/recommendations/{recommendation_id}")
+def modify_recommendation(
+    recommendation_id: str,
+    request: schemas.ModifyRequest,
+    operator_id: str = "op_001",
+    db: sqlite3.Connection = Depends(get_db)
+):
+    """Modify a recommendation"""
+    actions = OperatorActions(db)
+    modifications = request.dict(exclude_unset=True)
+    return actions.modify_recommendation(operator_id, recommendation_id, modifications)
+
+@router.post("/recommendations/{recommendation_id}/flag")
+def flag_recommendation(
+    recommendation_id: str,
+    request: schemas.FlagRequest,
+    operator_id: str = "op_001",
+    db: sqlite3.Connection = Depends(get_db)
+):
+    """Flag a recommendation for review"""
+    actions = OperatorActions(db)
+    return actions.flag_for_review(operator_id, recommendation_id, request.reason)
+
+@router.post("/recommendations/bulk-approve", response_model=schemas.BulkApproveResponse)
+def bulk_approve_recommendations(
+    request: schemas.BulkApproveRequest,
+    operator_id: str = "op_001",
+    db: sqlite3.Connection = Depends(get_db)
+):
+    """Bulk approve multiple recommendations"""
+    actions = OperatorActions(db)
+    return actions.bulk_approve(operator_id, request.recommendation_ids, request.notes)
+
+@router.get("/stats", response_model=schemas.OperatorStats)
+def get_operator_stats(
+    operator_id: Optional[str] = None,
+    db: sqlite3.Connection = Depends(get_db)
+):
+    """Get operator statistics"""
+    actions = OperatorActions(db)
+    return actions.get_operator_stats(operator_id)
+
+@router.get("/recommendations/{recommendation_id}/trace")
+def get_decision_trace(
+    recommendation_id: str,
+    db: sqlite3.Connection = Depends(get_db)
+):
+    """Get decision trace for a recommendation"""
+    cursor = db.cursor()
 
     cursor.execute("""
-        SELECT COUNT(*) FROM operator_audit_log
-        WHERE action IN ('approve', 'reject')
-          AND DATE(timestamp) = DATE('now')
-    """)
-    total_today = cursor.fetchone()[0]
+        SELECT * FROM decision_traces
+        WHERE recommendation_id = ?
+    """, (recommendation_id,))
 
-    if total_today > 10 and (rejected_today / total_today) > 0.2:
-        alerts.append({
-            'id': 'alert_high_rejection',
-            'type': 'high_rejection_rate',
-            'severity': 'medium',
-            'message': f'High rejection rate today: {rejected_today}/{total_today} ({int(rejected_today/total_today*100)}%)',
-            'createdAt': datetime.now().isoformat()
-        })
+    row = cursor.fetchone()
 
-    # Alert: Long queue
-    cursor.execute("SELECT COUNT(*) FROM recommendations WHERE status = 'pending'")
-    pending_count = cursor.fetchone()[0]
+    if not row:
+        raise HTTPException(status_code=404, detail="Trace not found")
 
-    if pending_count > 50:
-        alerts.append({
-            'id': 'alert_long_queue',
-            'type': 'long_queue',
-            'severity': 'high',
-            'message': f'Review queue is backing up: {pending_count} pending recommendations',
-            'count': pending_count,
-            'createdAt': datetime.now().isoformat()
-        })
+    trace = dict(row)
 
-    # Alert: Guardrail failures
-    cursor.execute("""
-        SELECT COUNT(*) FROM recommendations
-        WHERE guardrails_passed = 0
-          AND DATE(created_at) = DATE('now')
-    """)
-    guardrail_failures = cursor.fetchone()[0]
+    # Parse JSON fields
+    trace['signals'] = json.loads(trace.pop('signals_json'))
+    trace['persona_assignment'] = json.loads(trace.pop('persona_assignment_json'))
+    trace['content_matches'] = json.loads(trace.pop('content_matches_json'))
+    trace['relevance_scores'] = json.loads(trace.pop('relevance_scores_json'))
 
-    if guardrail_failures > 5:
-        alerts.append({
-            'id': 'alert_guardrail_failures',
-            'type': 'guardrail_failures',
-            'severity': 'high',
-            'message': f'Multiple guardrail failures detected today: {guardrail_failures} recommendations failed checks',
-            'count': guardrail_failures,
-            'createdAt': datetime.now().isoformat()
-        })
-
-    # Alert: Flagged items
-    cursor.execute("SELECT COUNT(*) FROM recommendation_flags WHERE resolved = 0")
-    flagged_count = cursor.fetchone()[0]
-
-    if flagged_count > 0:
-        alerts.append({
-            'id': 'alert_flagged_items',
-            'type': 'flagged_item',
-            'severity': 'medium',
-            'message': f'{flagged_count} flagged items require senior review',
-            'count': flagged_count,
-            'actionUrl': '/flagged',
-            'createdAt': datetime.now().isoformat()
-        })
-
-    return alerts
-```
-
-Add router to `main.py`:
-
-```python
-from alerts import router as alerts_router
-app.include_router(alerts_router, prefix="/api/operator")
+    return trace
 ```
 
 ---
 
-## Performance Optimizations
+### Requirements File
 
-### Memoization for Expensive Computations
+Create `/api/requirements.txt`:
 
-Update `/components/ReviewQueue/ReviewQueue.tsx`:
-
-```tsx
-import React, { useState, useMemo } from "react";
-
-export function ReviewQueue() {
-  // ... existing code ...
-
-  // Memoize filtered recommendations
-  const filteredRecommendations = useMemo(() => {
-    if (!recommendations) return [];
-
-    return recommendations.filter((rec) => {
-      // Add any additional client-side filtering here
-      return true;
-    });
-  }, [recommendations]);
-
-  // ... rest of component ...
-}
+```
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
 ```
 
-### Debounced Search
+---
 
-Create `/hooks/useDebounce.ts`:
-
-```typescript
-import { useState, useEffect } from "react";
-
-export function useDebounce<T>(value: T, delay: number = 300): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
-```
-
-Usage in UserSearch:
-
-```tsx
-import { useDebounce } from "@/hooks/useDebounce";
-
-export function UserSearch({ onUserSelect }: Props) {
-  const [searchInput, setSearchInput] = useState("");
-  const debouncedSearch = useDebounce(searchInput, 500);
-
-  useEffect(() => {
-    if (debouncedSearch.trim()) {
-      // Trigger search
-    }
-  }, [debouncedSearch]);
-
-  // ... rest of component
-}
-```
-
-### Virtual Scrolling (Optional for large lists)
-
-If the review queue grows very large, consider using `react-window`:
+## Running the Backend
 
 ```bash
-npm install react-window
-```
+# Navigate to API directory
+cd api
 
-```tsx
-import { FixedSizeList } from "react-window";
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-// In ReviewQueue component
-<FixedSizeList
-  height={800}
-  itemCount={recommendations.length}
-  itemSize={200}
-  width="100%"
->
-  {({ index, style }) => (
-    <div style={style}>
-      <RecommendationCard
-        recommendation={recommendations[index]}
-        // ... props
-      />
-    </div>
-  )}
-</FixedSizeList>;
+# Install dependencies
+pip install -r requirements.txt
+
+# Initialize database
+python -c "from database import init_database; init_database()"
+
+# Run server
+python main.py
+
+# Server will be running on http://localhost:8000
 ```
 
 ---
 
-## Keyboard Shortcuts Implementation
-
-### Global Keyboard Handler
-
-Create `/components/KeyboardShortcutsHandler.tsx`:
-
-```tsx
-import React, { useEffect } from "react";
-import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-
-interface Props {
-  onApprove?: () => void;
-  onReject?: () => void;
-  onFlag?: () => void;
-  onNext?: () => void;
-  onPrevious?: () => void;
-  enabled?: boolean;
-}
-
-export function KeyboardShortcutsHandler({
-  onApprove,
-  onReject,
-  onFlag,
-  onNext,
-  onPrevious,
-  enabled = true,
-}: Props) {
-  useKeyboardShortcuts({
-    onApprove: enabled ? onApprove : undefined,
-    onReject: enabled ? onReject : undefined,
-    onFlag: enabled ? onFlag : undefined,
-    onNext: enabled ? onNext : undefined,
-    onPrevious: enabled ? onPrevious : undefined,
-  });
-
-  return null; // This is a behavioral component, renders nothing
-}
-```
-
-### Keyboard Shortcuts Legend
-
-Create `/components/KeyboardShortcutsLegend.tsx`:
-
-```tsx
-import React, { useState } from "react";
-import { Modal } from "@/components/Common/Modal";
-import { Button } from "@/components/Common/Button";
-
-export function KeyboardShortcutsLegend() {
-  const [showModal, setShowModal] = useState(false);
-
-  const shortcuts = [
-    { key: "a", description: "Approve selected recommendation" },
-    { key: "r", description: "Reject selected recommendation" },
-    { key: "f", description: "Flag selected recommendation" },
-    { key: "m", description: "Modify selected recommendation" },
-    { key: "↓", description: "Next recommendation" },
-    { key: "↑", description: "Previous recommendation" },
-    { key: "Space", description: "Toggle selection" },
-    { key: "Cmd/Ctrl + A", description: "Select all" },
-    { key: "Esc", description: "Clear selection" },
-    { key: "?", description: "Show this help" },
-  ];
-
-  // Listen for '?' key to open legend
-  React.useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === "?" && !e.target.matches("input, textarea")) {
-        setShowModal(true);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, []);
-
-  return (
-    <>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setShowModal(true)}
-        className="fixed bottom-4 right-4 bg-white shadow-lg"
-      >
-        ⌨️ Shortcuts
-      </Button>
-
-      <Modal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        title="Keyboard Shortcuts"
-      >
-        <div className="space-y-2">
-          {shortcuts.map((shortcut, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
-            >
-              <span className="text-sm text-gray-700">
-                {shortcut.description}
-              </span>
-              <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-mono">
-                {shortcut.key}
-              </kbd>
-            </div>
-          ))}
-        </div>
-      </Modal>
-    </>
-  );
-}
-```
-
-Add to main dashboard:
-
-```tsx
-// In pages/index.tsx
-import { KeyboardShortcutsLegend } from "@/components/KeyboardShortcutsLegend";
-
-export default function OperatorDashboard() {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* ... existing layout ... */}
-
-      <KeyboardShortcutsLegend />
-    </div>
-  );
-}
-```
-
----
-
-## Accessibility Improvements
-
-### Focus Management
-
-Add to `/lib/focus-management.ts`:
-
-```typescript
-export function trapFocus(element: HTMLElement) {
-  const focusableElements = element.querySelectorAll(
-    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-  );
-  const firstElement = focusableElements[0] as HTMLElement;
-  const lastElement = focusableElements[
-    focusableElements.length - 1
-  ] as HTMLElement;
-
-  const handleTabKey = (e: KeyboardEvent) => {
-    if (e.key !== "Tab") return;
-
-    if (e.shiftKey) {
-      if (document.activeElement === firstElement) {
-        lastElement.focus();
-        e.preventDefault();
-      }
-    } else {
-      if (document.activeElement === lastElement) {
-        firstElement.focus();
-        e.preventDefault();
-      }
-    }
-  };
-
-  element.addEventListener("keydown", handleTabKey);
-  return () => element.removeEventListener("keydown", handleTabKey);
-}
-```
-
-### ARIA Labels
-
-Ensure all interactive elements have proper ARIA labels:
-
-```tsx
-// Example in RecommendationCard
-<button
-  onClick={handleApprove}
-  aria-label={`Approve recommendation ${recommendation.title}`}
-  className="..."
->
-  ✓ Approve
-</button>
-```
-
----
-
-## Testing Suite
-
-### Component Tests
-
-Create `/tests/components/ReviewQueue.test.tsx`:
-
-```tsx
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { ReviewQueue } from "@/components/ReviewQueue/ReviewQueue";
-import { SWRConfig } from "swr";
-
-const mockRecommendations = [
-  {
-    id: "rec_1",
-    user_id: "user_1",
-    persona_primary: "high_utilization",
-    type: "article",
-    title: "Test Recommendation",
-    rationale: "Test rationale",
-    priority: "high",
-    status: "pending",
-    guardrails_passed: {
-      tone_check: true,
-      advice_check: true,
-      eligibility_check: true,
-    },
-    generated_at: "2025-11-03T10:00:00Z",
-  },
-];
-
-describe("ReviewQueue", () => {
-  it("renders pending recommendations", async () => {
-    render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <ReviewQueue />
-      </SWRConfig>
-    );
-
-    expect(await screen.findByText("Review Queue")).toBeInTheDocument();
-  });
-
-  it("allows selecting recommendations", async () => {
-    render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <ReviewQueue />
-      </SWRConfig>
-    );
-
-    const checkbox = await screen.findByRole("checkbox");
-    fireEvent.click(checkbox);
-
-    expect(checkbox).toBeChecked();
-  });
-
-  it("shows bulk actions when items selected", async () => {
-    render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <ReviewQueue />
-      </SWRConfig>
-    );
-
-    const checkbox = await screen.findByRole("checkbox");
-    fireEvent.click(checkbox);
-
-    expect(await screen.findByText(/Bulk Approve/i)).toBeInTheDocument();
-  });
-});
-```
-
-### API Tests
-
-Create `/api/tests/test_operator_actions.py`:
-
-```python
-import pytest
-from operator_actions import OperatorActions
-from database import get_db_connection
-import sqlite3
-
-@pytest.fixture
-def db():
-    conn = sqlite3.connect(':memory:')
-    conn.row_factory = sqlite3.Row
-    # Initialize schema
-    # ... create tables ...
-    yield conn
-    conn.close()
-
-def test_approve_recommendation(db):
-    actions = OperatorActions(db)
-
-    # Insert test recommendation
-    # ...
-
-    result = actions.approve_recommendation('op_001', 'rec_test', 'Test notes')
-
-    assert result['status'] == 'approved'
-    assert result['approved_by'] == 'op_001'
-
-def test_reject_recommendation(db):
-    actions = OperatorActions(db)
-
-    result = actions.reject_recommendation('op_001', 'rec_test', 'Test reason')
-
-    assert result['status'] == 'rejected'
-    assert result['reason'] == 'Test reason'
-
-def test_bulk_approve(db):
-    actions = OperatorActions(db)
-
-    result = actions.bulk_approve('op_001', ['rec_1', 'rec_2', 'rec_3'])
-
-    assert result['total'] == 3
-    assert result['approved'] >= 0
-```
-
----
-
-## Monitoring & Logging
-
-### Frontend Error Boundary
-
-Create `/components/ErrorBoundary.tsx`:
-
-```tsx
-import React from "react";
-
-interface Props {
-  children: React.ReactNode;
-}
-
-interface State {
-  hasError: boolean;
-  error?: Error;
-}
-
-export class ErrorBoundary extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Error caught by boundary:", error, errorInfo);
-    // Send to error tracking service (e.g., Sentry)
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="bg-white p-8 rounded-lg border border-red-200 max-w-md">
-            <h2 className="text-xl font-semibold text-red-800 mb-2">
-              Something went wrong
-            </h2>
-            <p className="text-gray-600 mb-4">
-              The application encountered an unexpected error. Please refresh
-              the page.
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-            >
-              Refresh Page
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
-```
-
-Wrap app in `_app.tsx`:
-
-```tsx
-import { ErrorBoundary } from "@/components/ErrorBoundary";
-
-function MyApp({ Component, pageProps }) {
-  return (
-    <ErrorBoundary>
-      <Component {...pageProps} />
-    </ErrorBoundary>
-  );
-}
-```
-
-### Backend Logging
-
-Add to `/api/main.py`:
-
-```python
-import logging
-from datetime import datetime
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(f'operator_dashboard_{datetime.now().strftime("%Y%m%d")}.log'),
-        logging.StreamHandler()
-    ]
-)
-
-logger = logging.getLogger(__name__)
-
-@app.middleware("http")
-async def log_requests(request, call_next):
-    logger.info(f"{request.method} {request.url}")
-    response = await call_next(request)
-    logger.info(f"Status: {response.status_code}")
-    return response
-```
-
----
-
-## Production Checklist
-
-### Environment Configuration
-
-Create `/api/.env.production`:
-
-```bash
-DATABASE_URL=postgresql://user:pass@localhost/spendsense
-API_PORT=8000
-CORS_ORIGINS=https://operator.spendsense.com
-LOG_LEVEL=INFO
-```
-
-### Docker Configuration (Optional)
-
-Create `/Dockerfile`:
-
-```dockerfile
-FROM node:18-alpine AS frontend
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-FROM python:3.11-slim AS backend
-WORKDIR /app
-COPY api/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY api/ .
-
-EXPOSE 3000 8000
-
-CMD ["sh", "-c", "python main.py & npm start"]
-```
-
----
-
-## Final Acceptance Criteria
+## Acceptance Criteria
 
 **Must Have:**
 
-- [ ] All components integrated and working
-- [ ] Alert system functional
-- [ ] Keyboard shortcuts working
-- [ ] Performance optimized (load time <2s)
-- [ ] Error boundaries catch errors
-- [ ] All tests passing
-- [ ] Backend logging configured
-- [ ] CORS properly configured
-- [ ] Database indexes created
-- [ ] API documentation complete
+- [ ] FastAPI application runs without errors
+- [ ] Database schema created successfully
+- [ ] All recommendation endpoints functional
+- [ ] Approve action updates database
+- [ ] Reject action updates database
+- [ ] Modify action updates database
+- [ ] Flag action creates flag record
+- [ ] Bulk approve processes multiple recommendations
+- [ ] Operator stats endpoint returns correct counts
+- [ ] Decision trace endpoint returns trace data
+- [ ] Audit log records all actions
+- [ ] CORS configured for frontend
 
 **Should Have:**
 
-- [ ] Accessibility audit passed
-- [ ] Mobile responsive (even if not fully supported)
-- [ ] Analytics tracking (optional)
-- [ ] Rate limiting on API
-- [ ] Caching strategy implemented
+- [ ] Input validation on all endpoints
+- [ ] Error handling for database errors
+- [ ] Transaction rollback on failures
+- [ ] API documentation (FastAPI auto-docs)
+- [ ] Logging for debugging
 
 ---
 
-## Deployment Steps
+## Testing Checklist
 
-1. **Frontend Build**
-
-   ```bash
-   npm run build
-   npm run start
-   ```
-
-2. **Backend Deployment**
-
-   ```bash
-   cd api
-   uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
-   ```
-
-3. **Database Migration**
-
-   ```bash
-   python -c "from database import init_database; init_database()"
-   ```
-
-4. **Health Check**
-   - Visit http://localhost:8000/health
-   - Check frontend loads at http://localhost:3000
+- [ ] Server starts successfully
+- [ ] GET /recommendations returns data
+- [ ] POST /approve updates status
+- [ ] POST /reject with reason works
+- [ ] PATCH /modify updates fields
+- [ ] POST /flag creates flag
+- [ ] POST /bulk-approve processes multiple
+- [ ] GET /stats returns correct counts
+- [ ] GET /trace returns trace data
+- [ ] Audit log entries created
+- [ ] Database transactions commit properly
+- [ ] Errors return appropriate status codes
 
 ---
 
-## Post-Deployment Monitoring
-
-- Monitor API response times
-- Track error rates
-- Monitor database performance
-- Track operator usage metrics
-- Review audit logs regularly
-
----
-
-**Dependencies:** All previous shards (1-6)  
-**Blocks:** None (final shard)  
-**Estimated Time:** 4-6 hours
+**Dependencies:** Shard 1  
+**Blocks:** All frontend shards need this backend  
+**Estimated Time:** 6-8 hours
