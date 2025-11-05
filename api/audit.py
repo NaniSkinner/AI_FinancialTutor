@@ -14,7 +14,7 @@ import sqlite3
 import json
 from datetime import datetime, timedelta
 
-from database import get_db
+from database import get_db_fastapi
 import schemas
 
 
@@ -38,7 +38,7 @@ def get_audit_logs(
     recommendation_id: Optional[str] = Query(None, description="Filter by recommendation"),
     limit: int = Query(100, le=1000, description="Maximum results"),
     offset: int = Query(0, ge=0, description="Offset for pagination"),
-    db: sqlite3.Connection = Depends(get_db)
+    db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
     Query audit logs with various filters.
@@ -101,9 +101,12 @@ def get_audit_logs(
         
         # Parse metadata JSON
         try:
-            metadata = json.loads(log.get('metadata', '{}'))
-            log['metadata'] = metadata
-        except json.JSONDecodeError:
+            metadata_value = log.get('metadata')
+            if metadata_value:
+                log['metadata'] = json.loads(metadata_value)
+            else:
+                log['metadata'] = {}
+        except (json.JSONDecodeError, TypeError):
             log['metadata'] = {}
         
         logs.append(log)
@@ -147,7 +150,7 @@ def get_audit_logs(
 @router.get("/audit-logs/{audit_id}")
 def get_audit_log(
     audit_id: str,
-    db: sqlite3.Connection = Depends(get_db)
+    db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
     Get a specific audit log entry by ID.
@@ -192,7 +195,7 @@ def get_audit_log(
 def get_operator_activity_summary(
     operator_id: str,
     days: int = Query(30, le=365, description="Number of days to analyze"),
-    db: sqlite3.Connection = Depends(get_db)
+    db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
     Get activity summary for a specific operator.
@@ -283,7 +286,7 @@ def get_flags(
     resolved: Optional[bool] = Query(None, description="Filter by resolved status"),
     flagged_by: Optional[str] = Query(None, description="Filter by operator who flagged"),
     limit: int = Query(50, le=500, description="Maximum results"),
-    db: sqlite3.Connection = Depends(get_db)
+    db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
     Get flagged recommendations.
@@ -335,7 +338,7 @@ def get_flags(
 @router.get("/flags/{flag_id}")
 def get_flag(
     flag_id: str,
-    db: sqlite3.Connection = Depends(get_db)
+    db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
     Get details for a specific flag.
@@ -388,7 +391,7 @@ def get_flag(
 @router.post("/flags/{flag_id}/resolve")
 def resolve_flag(
     flag_id: str,
-    db: sqlite3.Connection = Depends(get_db)
+    db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
     Mark a flag as resolved.
@@ -451,7 +454,7 @@ def resolve_flag(
 @router.get("/audit-logs/stats/overview")
 def get_audit_statistics(
     days: int = Query(7, le=365, description="Number of days to analyze"),
-    db: sqlite3.Connection = Depends(get_db)
+    db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
     Get overall audit statistics and trends.

@@ -49,7 +49,6 @@ try:
     from users import router as users_router
     from audit import router as audit_router
     from alerts import router as alerts_router
-    from personas import router as personas_router
     ROUTERS_AVAILABLE = True
 except ImportError as e:
     ROUTERS_AVAILABLE = False
@@ -57,8 +56,7 @@ except ImportError as e:
 
 # Try to import personas router separately (since it's newly added)
 try:
-    if not 'personas_router' in dir():
-        from personas import router as personas_router
+    from personas import router as personas_router
     PERSONAS_ROUTER_AVAILABLE = True
 except ImportError as e:
     PERSONAS_ROUTER_AVAILABLE = False

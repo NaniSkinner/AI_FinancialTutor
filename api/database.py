@@ -64,6 +64,30 @@ def get_db() -> Generator[sqlite3.Connection, None, None]:
         conn.close()
 
 
+def get_db_fastapi() -> Generator[sqlite3.Connection, None, None]:
+    """
+    FastAPI dependency for database connections.
+    
+    Use this with Depends() in FastAPI endpoints:
+        def my_endpoint(db: sqlite3.Connection = Depends(get_db_fastapi)):
+            cursor = db.cursor()
+            ...
+    
+    Yields:
+        sqlite3.Connection: Database connection
+    """
+    conn = get_db_connection()
+    try:
+        yield conn
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        print(f"Database error: {e}")
+        raise e
+    finally:
+        conn.close()
+
+
 def init_database() -> None:
     """
     Initialize database with operator dashboard schema.

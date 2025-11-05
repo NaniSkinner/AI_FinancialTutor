@@ -31,6 +31,15 @@ export default function OperatorDashboard() {
             </div>
 
             <div className="flex items-center gap-4">
+              {/* Navigation Links */}
+              <a
+                href="/audit-logs"
+                className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors flex items-center gap-1"
+              >
+                <span>📋</span>
+                <span>Audit Logs</span>
+              </a>
+
               {/* Quick Stats */}
               <div className="text-sm text-gray-600">
                 <span className="font-medium">Pending: </span>
