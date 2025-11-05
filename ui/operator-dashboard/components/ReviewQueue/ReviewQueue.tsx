@@ -8,7 +8,9 @@ import { FilterPanel } from "./FilterPanel";
 import { BulkActions } from "./BulkActions";
 import { EmptyState } from "@/components/Common/EmptyState";
 import { Spinner } from "@/components/Common/Spinner";
+import { Button } from "@/components/Common/Button";
 import { bulkApproveRecommendations } from "@/lib/api";
+import { exportRecommendationsToCsv } from "@/lib/export";
 
 /**
  * ReviewQueue component - Main interface for reviewing AI-generated recommendations
@@ -21,6 +23,7 @@ import { bulkApproveRecommendations } from "@/lib/api";
 export function ReviewQueue() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
   const [filters, setFilters] = useState({
     persona: "all",
     priority: "all",
@@ -80,6 +83,27 @@ export function ReviewQueue() {
   }, [selectedIds, mutate]);
 
   // ============================================================================
+  // EXPORT HANDLER (Memoized)
+  // ============================================================================
+
+  const handleExport = useCallback(async () => {
+    setIsExporting(true);
+    try {
+      await exportRecommendationsToCsv(filters);
+      alert("Recommendations exported successfully!");
+    } catch (error) {
+      console.error("Export failed:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to export recommendations. Please try again."
+      );
+    } finally {
+      setIsExporting(false);
+    }
+  }, [filters]);
+
+  // ============================================================================
   // KEYBOARD SHORTCUTS
   // ============================================================================
 
@@ -135,9 +159,63 @@ export function ReviewQueue() {
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-900">Review Queue</h2>
 
-        <div className="text-sm text-gray-600">
-          {recommendations?.length || 0} pending recommendation
-          {recommendations?.length !== 1 ? "s" : ""}
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-gray-600">
+            {recommendations?.length || 0} pending recommendation
+            {recommendations?.length !== 1 ? "s" : ""}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            disabled={
+              isExporting || !recommendations || recommendations.length === 0
+            }
+          >
+            {isExporting ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                Exporting...
+              </>
+            ) : (
+              <>
+                <svg
+                  className="mr-2 h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+                Export to CSV
+              </>
+            )}
+          </Button>
         </div>
       </div>
 
