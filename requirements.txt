@@ -12,6 +12,8 @@ sqlite3  # Built-in to Python, included for documentation
 # Testing
 pytest>=7.4.0
 pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+pytest-benchmark>=4.0.0
 
 # Future dependencies (for later phases)
 # fastapi>=0.104.0

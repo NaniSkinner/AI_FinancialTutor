@@ -369,3 +369,47 @@ class TransitionHistoryResponse(BaseModel):
     transitions: List[Dict[str, Any]]
     total_transitions: int
 
+
+class PersonaTenureResponse(BaseModel):
+    """Response containing user's persona tenure information"""
+    user_id: str
+    current_persona: str
+    assigned_at: str
+    days_in_persona: int
+    previous_persona: Optional[str] = None
+    last_transition_date: Optional[str] = None
+
+
+class BatchAssignRequest(BaseModel):
+    """Request to assign personas to multiple users"""
+    user_ids: List[str] = Field(..., description="List of user IDs to assign personas to", min_items=1)
+    window_type: str = Field(default="30d", description="Time window: '30d' or '180d'")
+    
+    @validator('window_type')
+    def validate_window_type(cls, v):
+        if v not in ['30d', '180d']:
+            raise ValueError('window_type must be either "30d" or "180d"')
+        return v
+    
+    @validator('user_ids')
+    def validate_user_ids(cls, v):
+        if len(v) > 100:
+            raise ValueError('Cannot process more than 100 users in a single batch')
+        return v
+
+
+class BatchAssignResult(BaseModel):
+    """Result for a single user in batch assignment"""
+    user_id: str
+    status: str  # 'success' or 'failed'
+    primary_persona: Optional[str] = None
+    error: Optional[str] = None
+
+
+class BatchAssignResponse(BaseModel):
+    """Response containing batch assignment results"""
+    total_requested: int
+    successful: int
+    failed: int
+    results: List[BatchAssignResult]
+

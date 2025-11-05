@@ -36,7 +36,11 @@ from schemas import (
     PersonaAssignment,
     PersonaTransitionRequest,
     PersonaTransition,
-    TransitionHistoryResponse
+    TransitionHistoryResponse,
+    PersonaTenureResponse,
+    BatchAssignRequest,
+    BatchAssignResponse,
+    BatchAssignResult
 )
 from database import get_db
 
@@ -377,6 +381,208 @@ def get_transition_history(
         raise HTTPException(
             status_code=500,
             detail=f"Internal error retrieving transition history: {str(e)}"
+        )
+
+
+# ========================================================================
+# GET /api/personas/{user_id}/tenure - Get persona tenure
+# ========================================================================
+
+@router.get("/personas/{user_id}/tenure", response_model=PersonaTenureResponse, tags=["Personas"])
+def get_persona_tenure(
+    user_id: str = Path(..., description="User ID to get tenure for"),
+    window_type: str = Query("30d", description="Time window: '30d' or '180d'")
+):
+    """
+    Get how long user has been in their current persona.
+    
+    Calculates the number of days the user has been assigned to their
+    current persona and provides information about their previous persona
+    if a transition has occurred.
+    
+    Args:
+        user_id: User ID to get tenure for
+        window_type: Time window ('30d' or '180d')
+        
+    Returns:
+        PersonaTenureResponse: Tenure details including days in current persona
+        
+    Raises:
+        400: Invalid window_type parameter
+        404: User not found or no persona assigned
+        500: Internal server error
+    """
+    if not PERSONAS_AVAILABLE:
+        raise HTTPException(
+            status_code=503,
+            detail="Persona system not available. Please ensure persona modules are installed."
+        )
+    
+    # Validate window_type
+    if window_type not in ['30d', '180d']:
+        raise HTTPException(
+            status_code=400,
+            detail="window_type must be either '30d' or '180d'"
+        )
+    
+    logger.info(f"Getting persona tenure for user {user_id} with window_type={window_type}")
+    
+    try:
+        with get_db() as conn:
+            # Verify user exists
+            cursor = conn.cursor()
+            cursor.execute("SELECT user_id FROM users WHERE user_id = ?", (user_id,))
+            user = cursor.fetchone()
+            
+            if not user:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"User {user_id} not found"
+                )
+            
+            # Initialize transition tracker
+            tracker = PersonaTransitionTracker(conn)
+            
+            # Get tenure information
+            tenure = tracker.get_persona_tenure(user_id, window_type=window_type)
+            
+            # Check if error occurred
+            if 'error' in tenure:
+                raise HTTPException(
+                    status_code=404,
+                    detail=tenure['error']
+                )
+            
+            # Add user_id to response
+            tenure['user_id'] = user_id
+            
+            logger.info(
+                f"Retrieved tenure for user {user_id}: "
+                f"{tenure['current_persona']} for {tenure['days_in_persona']} days"
+            )
+            
+            return PersonaTenureResponse(**tenure)
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting tenure for user {user_id}: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Internal error retrieving tenure: {str(e)}"
+        )
+
+
+# ========================================================================
+# POST /api/personas/batch-assign - Batch assign personas
+# ========================================================================
+
+@router.post("/personas/batch-assign", response_model=BatchAssignResponse, tags=["Personas"])
+def batch_assign_personas(
+    request: BatchAssignRequest
+):
+    """
+    Assign personas to multiple users in batch.
+    
+    Processes persona assignments for multiple users efficiently.
+    Individual failures do not stop the batch - each user's result
+    is returned separately.
+    
+    Args:
+        request: Batch assignment request with user IDs and window type
+        
+    Returns:
+        BatchAssignResponse: Results for each user with success/failure status
+        
+    Raises:
+        400: Invalid request parameters
+        500: Internal server error
+    """
+    if not PERSONAS_AVAILABLE:
+        raise HTTPException(
+            status_code=503,
+            detail="Persona system not available. Please ensure persona modules are installed."
+        )
+    
+    logger.info(
+        f"Batch assigning personas to {len(request.user_ids)} users "
+        f"with window_type={request.window_type}"
+    )
+    
+    results = []
+    successful = 0
+    failed = 0
+    
+    try:
+        with get_db() as conn:
+            # Initialize persona assigner
+            assigner = PersonaAssigner(conn)
+            
+            # Process each user
+            for user_id in request.user_ids:
+                try:
+                    # Verify user exists
+                    cursor = conn.cursor()
+                    cursor.execute("SELECT user_id FROM users WHERE user_id = ?", (user_id,))
+                    user = cursor.fetchone()
+                    
+                    if not user:
+                        results.append(BatchAssignResult(
+                            user_id=user_id,
+                            status="failed",
+                            error=f"User {user_id} not found"
+                        ))
+                        failed += 1
+                        continue
+                    
+                    # Assign persona
+                    assignment = assigner.assign_personas(user_id, window_type=request.window_type)
+                    
+                    # Check if assignment failed (no signals)
+                    if assignment.get('primary_persona') == 'none':
+                        results.append(BatchAssignResult(
+                            user_id=user_id,
+                            status="failed",
+                            error="No signals available for user"
+                        ))
+                        failed += 1
+                        continue
+                    
+                    # Store assignment
+                    assigner.store_assignment(assignment)
+                    
+                    results.append(BatchAssignResult(
+                        user_id=user_id,
+                        status="success",
+                        primary_persona=assignment['primary_persona']
+                    ))
+                    successful += 1
+                    
+                    logger.debug(f"Successfully assigned persona to {user_id}: {assignment['primary_persona']}")
+                    
+                except Exception as e:
+                    logger.error(f"Error assigning persona to {user_id}: {e}")
+                    results.append(BatchAssignResult(
+                        user_id=user_id,
+                        status="failed",
+                        error=str(e)
+                    ))
+                    failed += 1
+            
+            logger.info(f"Batch assignment complete: {successful} successful, {failed} failed")
+            
+            return BatchAssignResponse(
+                total_requested=len(request.user_ids),
+                successful=successful,
+                failed=failed,
+                results=results
+            )
+            
+    except Exception as e:
+        logger.error(f"Error in batch assignment: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Internal error during batch assignment: {str(e)}"
         )
 
 

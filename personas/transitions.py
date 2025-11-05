@@ -33,6 +33,16 @@ POSITIVE_TRANSITIONS: Dict[Tuple[str, str], Dict[str, str]] = {
         'milestone': 'credit_normalized',
         'achievement': 'Credit Health Restored',
     },
+    ('high_utilization', 'student'): {
+        'message': '📈 Your credit health has improved!',
+        'milestone': 'credit_improved',
+        'achievement': 'Credit Health Progress',
+    },
+    ('high_utilization', 'variable_income_budgeter'): {
+        'message': '📈 Your credit health has improved!',
+        'milestone': 'credit_improved',
+        'achievement': 'Credit Health Progress',
+    },
     ('variable_income_budgeter', 'savings_builder'): {
         'message': '🎉 Amazing! Your income has stabilized and you\'re building savings!',
         'milestone': 'stability_achieved',
@@ -398,4 +408,45 @@ class PersonaTransitionTracker:
             })
         
         return transitions
+    
+    def get_persona_tenure(self, user_id: str, window_type: str = '30d') -> Dict[str, Any]:
+        """
+        Calculate how long user has been in their current persona.
+        
+        Args:
+            user_id: User identifier
+            window_type: Time window ('30d' or '180d')
+            
+        Returns:
+            Dict with tenure details:
+                - current_persona: str
+                - assigned_at: str (ISO timestamp)
+                - days_in_persona: int
+                - previous_persona: str (optional)
+                - last_transition_date: str (optional, ISO timestamp)
+        """
+        # Get current persona
+        current = self._get_latest_persona(user_id, window_type)
+        
+        if not current:
+            return {'error': 'No persona assignment found'}
+        
+        # Parse assigned date and calculate days
+        assigned_date = parse_iso_timestamp(current['assigned_at'])
+        days_in_persona = (datetime.now() - assigned_date).days
+        
+        # Build result
+        result = {
+            'current_persona': current['primary_persona'],
+            'assigned_at': current['assigned_at'],
+            'days_in_persona': days_in_persona
+        }
+        
+        # Check for previous persona
+        previous = self._get_previous_persona(user_id, window_type)
+        if previous:
+            result['previous_persona'] = previous['primary_persona']
+            result['last_transition_date'] = current['assigned_at']
+        
+        return result
 
