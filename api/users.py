@@ -13,6 +13,7 @@ import sqlite3
 import json
 
 from database import get_db
+from auth import verify_token
 import schemas
 
 
@@ -31,6 +32,7 @@ router = APIRouter()
 def get_user_signals(
     user_id: str,
     window_type: str = Query("30d", description="Time window (7d/30d/90d/180d)"),
+    operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """
@@ -100,6 +102,7 @@ def get_user_signals(
 def get_all_user_signals(
     user_id: str,
     window_type: str = Query("30d", description="Time window (7d/30d/90d/180d)"),
+    operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """
@@ -173,6 +176,7 @@ def get_all_user_signals(
 def get_persona_history(
     user_id: str,
     limit: int = Query(10, le=50, description="Number of history entries to return"),
+    operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """
@@ -247,6 +251,7 @@ def get_persona_history(
 @router.get("/users/{user_id}/profile")
 def get_user_profile(
     user_id: str,
+    operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """
@@ -341,6 +346,7 @@ def get_user_recommendations(
     user_id: str,
     status: Optional[str] = Query("all", description="Filter by status"),
     limit: int = Query(20, le=100, description="Number of recommendations to return"),
+    operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """
@@ -403,6 +409,7 @@ def get_user_recommendations(
 @router.get("/users/{user_id}/accounts")
 def get_user_accounts(
     user_id: str,
+    operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """

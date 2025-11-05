@@ -10,18 +10,19 @@ Generates real-time alerts based on system state:
 These alerts help operators identify system issues proactively.
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from typing import List, Dict, Any
 import sqlite3
 from datetime import datetime
 
 from database import get_db
+from auth import verify_token
 
 router = APIRouter()
 
 
 @router.get("/alerts", response_model=List[Dict[str, Any]])
-def get_alerts():
+def get_alerts(operator: dict = Depends(verify_token)):
     """
     Generate alerts based on current system state
     

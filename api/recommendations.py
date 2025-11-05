@@ -19,6 +19,7 @@ import json
 
 from database import get_db
 from operator_actions import OperatorActions
+from auth import verify_token, require_permission
 import schemas
 
 
@@ -35,15 +36,15 @@ router = APIRouter()
 
 def get_current_operator_id() -> str:
     """
-    Get current operator ID from authentication.
+    DEPRECATED: Use verify_token dependency instead.
     
-    TODO: Replace with JWT token extraction in production.
-    For now, returns placeholder operator ID.
+    This function is kept for backward compatibility but should not be used.
+    Use the verify_token dependency in endpoint signatures.
     
     Returns:
-        str: Operator ID
+        str: Placeholder operator ID
     """
-    # Placeholder - in production, extract from JWT token
+    # Deprecated - use verify_token dependency
     return "op_001"
 
 
@@ -87,6 +88,7 @@ def get_recommendations(
     persona: Optional[str] = Query("all", description="Filter by persona"),
     priority: Optional[str] = Query("all", description="Filter by priority (high/medium/low/all)"),
     limit: int = Query(100, le=500, description="Maximum number of results"),
+    operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """
@@ -147,6 +149,7 @@ def get_recommendations(
 def approve_recommendation(
     recommendation_id: str,
     request: schemas.ApproveRequest,
+    operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """
@@ -156,6 +159,7 @@ def approve_recommendation(
     - Recommendation must exist
     - Status must be 'pending' or 'flagged'
     - Must have passed all guardrails
+    - Operator must have 'approve' permission
     
     Body:
     - notes: Optional operator notes
@@ -163,7 +167,7 @@ def approve_recommendation(
     Returns:
         Approval confirmation with details
     """
-    operator_id = get_current_operator_id()
+    operator_id = operator["operator_id"]
     
     try:
         actions = OperatorActions(db)
@@ -187,6 +191,7 @@ def approve_recommendation(
 def reject_recommendation(
     recommendation_id: str,
     request: schemas.RejectRequest,
+    operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """
@@ -195,6 +200,7 @@ def reject_recommendation(
     Requirements:
     - Recommendation must exist
     - Reason must be provided (min 10 characters)
+    - Operator must have 'reject' permission
     
     Body:
     - reason: Reason for rejection (required)
@@ -202,7 +208,7 @@ def reject_recommendation(
     Returns:
         Rejection confirmation with details
     """
-    operator_id = get_current_operator_id()
+    operator_id = operator["operator_id"]
     
     try:
         actions = OperatorActions(db)
@@ -226,10 +232,13 @@ def reject_recommendation(
 def modify_recommendation(
     recommendation_id: str,
     request: schemas.ModifyRequest,
+    operator: dict = Depends(require_permission("modify")),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """
     Modify recommendation fields before approval.
+    
+    Requires 'modify' permission (senior or admin role).
     
     Allowed modifications:
     - rationale: Update the personalized rationale
@@ -244,7 +253,7 @@ def modify_recommendation(
     Returns:
         Modification confirmation with applied changes
     """
-    operator_id = get_current_operator_id()
+    operator_id = operator["operator_id"]
     
     # Extract only provided fields
     modifications = request.dict(exclude_unset=True)
@@ -274,10 +283,13 @@ def modify_recommendation(
 def flag_recommendation(
     recommendation_id: str,
     request: schemas.FlagRequest,
+    operator: dict = Depends(require_permission("flag")),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """
     Flag recommendation for additional review.
+    
+    Requires 'flag' permission (senior or admin role).
     
     Use cases:
     - Unclear content appropriateness
@@ -295,7 +307,7 @@ def flag_recommendation(
     Returns:
         Flag confirmation with flag_id
     """
-    operator_id = get_current_operator_id()
+    operator_id = operator["operator_id"]
     
     try:
         actions = OperatorActions(db)
@@ -318,10 +330,13 @@ def flag_recommendation(
 @router.post("/recommendations/bulk-approve", response_model=schemas.BulkApproveResponse)
 def bulk_approve_recommendations(
     request: schemas.BulkApproveRequest,
+    operator: dict = Depends(require_permission("bulk_approve")),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """
     Approve multiple recommendations at once.
+    
+    Requires 'bulk_approve' permission (senior or admin role).
     
     Safety features:
     - Validates each recommendation individually
@@ -340,7 +355,7 @@ def bulk_approve_recommendations(
     Returns:
         Summary with total, approved count, failed count, and details
     """
-    operator_id = get_current_operator_id()
+    operator_id = operator["operator_id"]
     
     if len(request.recommendation_ids) > 50:
         raise HTTPException(
@@ -367,6 +382,7 @@ def bulk_approve_recommendations(
 @router.get("/stats", response_model=schemas.OperatorStats)
 def get_operator_stats(
     operator_id: Optional[str] = Query(None, description="Filter stats by operator"),
+    current_operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """
@@ -400,6 +416,7 @@ def get_operator_stats(
 @router.get("/recommendations/{recommendation_id}/trace")
 def get_decision_trace(
     recommendation_id: str,
+    operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db)
 ):
     """

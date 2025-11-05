@@ -1,17 +1,39 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ReviewQueue } from "@/components/ReviewQueue/ReviewQueue";
 import { AlertPanel } from "@/components/AlertPanel/AlertPanel";
 import { StatsOverview } from "@/components/StatsOverview";
 import { UserExplorer } from "@/components/UserExplorer";
 import { KeyboardShortcutsLegend } from "@/components/KeyboardShortcutsLegend";
+import { useAuth } from "@/lib/auth";
 
 type TabType = "review" | "explorer";
 
 export default function OperatorDashboard() {
   const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
   const [activeTab, setActiveTab] = useState<TabType>("review");
+  const [showLogoutMenu, setShowLogoutMenu] = useState(false);
+  const { operator, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    if (confirm("Are you sure you want to log out?")) {
+      logout();
+      router.push("/login");
+    }
+  };
+
+  // Get initials from operator name
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -47,13 +69,67 @@ export default function OperatorDashboard() {
               </div>
 
               {/* Operator Info */}
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                  JD
-                </div>
-                <span className="text-sm font-medium text-gray-700">
-                  Jane Doe
-                </span>
+              <div className="relative">
+                <button
+                  onClick={() => setShowLogoutMenu(!showLogoutMenu)}
+                  className="flex items-center gap-2 hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors"
+                >
+                  <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                    {operator ? getInitials(operator.name) : "OP"}
+                  </div>
+                  <div className="text-left">
+                    <div className="text-sm font-medium text-gray-700">
+                      {operator?.name || "Operator"}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {operator?.role || "user"}
+                    </div>
+                  </div>
+                  <svg
+                    className="w-4 h-4 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+
+                {/* Dropdown Menu */}
+                {showLogoutMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-xs text-gray-500">Signed in as</p>
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {operator?.email}
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 transition-colors flex items-center gap-2"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        />
+                      </svg>
+                      Log out
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

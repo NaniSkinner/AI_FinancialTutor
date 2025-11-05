@@ -15,6 +15,7 @@ import json
 from datetime import datetime, timedelta
 
 from database import get_db_fastapi
+from auth import verify_token
 import schemas
 
 
@@ -38,6 +39,7 @@ def get_audit_logs(
     recommendation_id: Optional[str] = Query(None, description="Filter by recommendation"),
     limit: int = Query(100, le=1000, description="Maximum results"),
     offset: int = Query(0, ge=0, description="Offset for pagination"),
+    current_operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
@@ -150,6 +152,7 @@ def get_audit_logs(
 @router.get("/audit-logs/{audit_id}")
 def get_audit_log(
     audit_id: str,
+    current_operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
@@ -195,6 +198,7 @@ def get_audit_log(
 def get_operator_activity_summary(
     operator_id: str,
     days: int = Query(30, le=365, description="Number of days to analyze"),
+    current_operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
@@ -286,6 +290,7 @@ def get_flags(
     resolved: Optional[bool] = Query(None, description="Filter by resolved status"),
     flagged_by: Optional[str] = Query(None, description="Filter by operator who flagged"),
     limit: int = Query(50, le=500, description="Maximum results"),
+    current_operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
@@ -338,6 +343,7 @@ def get_flags(
 @router.get("/flags/{flag_id}")
 def get_flag(
     flag_id: str,
+    current_operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
@@ -391,6 +397,7 @@ def get_flag(
 @router.post("/flags/{flag_id}/resolve")
 def resolve_flag(
     flag_id: str,
+    current_operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """
@@ -427,7 +434,7 @@ def resolve_flag(
     
     # Mark as resolved
     now = datetime.now().isoformat()
-    operator_id = "op_001"  # TODO: Get from auth
+    operator_id = current_operator["operator_id"]
     
     cursor.execute("""
         UPDATE recommendation_flags
@@ -454,6 +461,7 @@ def resolve_flag(
 @router.get("/audit-logs/stats/overview")
 def get_audit_statistics(
     days: int = Query(7, le=365, description="Number of days to analyze"),
+    current_operator: dict = Depends(verify_token),
     db: sqlite3.Connection = Depends(get_db_fastapi)
 ):
     """

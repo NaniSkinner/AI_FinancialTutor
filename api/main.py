@@ -62,6 +62,14 @@ except ImportError as e:
     PERSONAS_ROUTER_AVAILABLE = False
     logger.warning(f"Personas router not available: {e}")
 
+# Try to import auth router
+try:
+    from auth import router as auth_router
+    AUTH_ROUTER_AVAILABLE = True
+except ImportError as e:
+    AUTH_ROUTER_AVAILABLE = False
+    logger.warning(f"Auth router not available: {e}")
+
 
 # ========================================================================
 # FastAPI Application
@@ -243,6 +251,17 @@ if PERSONAS_ROUTER_AVAILABLE:
     print("✓ Personas router registered successfully")
 else:
     print("⚠️  Personas router not available - create personas.py")
+
+# Register auth router
+if AUTH_ROUTER_AVAILABLE:
+    app.include_router(
+        auth_router,
+        prefix="/api/auth",
+        tags=["Authentication"]
+    )
+    print("✓ Auth router registered successfully")
+else:
+    print("⚠️  Auth router not available - create auth.py")
 
 
 # ========================================================================
