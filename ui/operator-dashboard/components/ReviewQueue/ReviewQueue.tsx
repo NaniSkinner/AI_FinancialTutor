@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useRecommendations } from "@/hooks/useRecommendations";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { RecommendationCard } from "./RecommendationCard";
@@ -35,28 +35,37 @@ export function ReviewQueue() {
   } = useRecommendations(filters);
 
   // ============================================================================
-  // SELECTION HANDLERS
+  // SELECTION HANDLERS (Memoized for performance)
   // ============================================================================
 
-  const handleSelectAll = () => {
+  const handleSelectAll = useCallback(() => {
     if (selectedIds.length === recommendations?.length) {
       setSelectedIds([]);
     } else {
       setSelectedIds(recommendations?.map((r) => r.id) || []);
     }
-  };
+  }, [selectedIds.length, recommendations]);
 
-  const handleToggleSelect = (id: string) => {
+  const handleToggleSelect = useCallback((id: string) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
-  };
+  }, []);
+
+  // Memoize filtered/processed recommendations
+  const processedRecommendations = useMemo(() => {
+    if (!recommendations) return [];
+
+    // Additional client-side filtering can go here if needed
+    // For now, just return the recommendations as-is
+    return recommendations;
+  }, [recommendations]);
 
   // ============================================================================
-  // BULK APPROVE HANDLER
+  // BULK APPROVE HANDLER (Memoized)
   // ============================================================================
 
-  const handleBulkApprove = async () => {
+  const handleBulkApprove = useCallback(async () => {
     try {
       await bulkApproveRecommendations({
         recommendation_ids: selectedIds,
@@ -68,7 +77,7 @@ export function ReviewQueue() {
       console.error("Bulk approve failed:", error);
       // TODO: Show error toast instead of console.error
     }
-  };
+  }, [selectedIds, mutate]);
 
   // ============================================================================
   // KEYBOARD SHORTCUTS
@@ -187,7 +196,7 @@ export function ReviewQueue() {
             }
           />
         ) : (
-          recommendations?.map((recommendation) => (
+          processedRecommendations.map((recommendation) => (
             <RecommendationCard
               key={recommendation.id}
               recommendation={recommendation}

@@ -5,6 +5,7 @@ import { ReviewQueue } from "@/components/ReviewQueue/ReviewQueue";
 import { AlertPanel } from "@/components/AlertPanel/AlertPanel";
 import { StatsOverview } from "@/components/StatsOverview";
 import { UserExplorer } from "@/components/UserExplorer";
+import { KeyboardShortcutsLegend } from "@/components/KeyboardShortcutsLegend";
 
 type TabType = "review" | "explorer";
 
@@ -102,6 +103,9 @@ export default function OperatorDashboard() {
           </div>
         )}
       </main>
+
+      {/* Keyboard Shortcuts Legend */}
+      <KeyboardShortcutsLegend />
     </div>
   );
 }

@@ -182,6 +182,8 @@ export function RecommendationCard({
               variant="ghost"
               size="sm"
               onClick={() => setShowTraces(!showTraces)}
+              aria-label={`${showTraces ? "Hide" : "Show"} decision traces for ${recommendation.title}`}
+              aria-expanded={showTraces}
             >
               {showTraces ? "Hide" : "Show"} Traces
             </Button>
@@ -222,6 +224,7 @@ export function RecommendationCard({
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsModifying(true)}
+                aria-label={`Modify recommendation ${recommendation.title}`}
               >
                 Modify
               </Button>
@@ -234,6 +237,7 @@ export function RecommendationCard({
               onChange={(e) => setModifiedRationale(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               rows={4}
+              aria-label="Edit recommendation rationale"
             />
           ) : (
             <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
@@ -312,6 +316,7 @@ export function RecommendationCard({
                 onClick={handleApprove}
                 disabled={actionLoading}
                 className="bg-green-600 text-white hover:bg-green-700"
+                aria-label={`Approve recommendation ${recommendation.title}`}
               >
                 ✓ Approve
               </Button>
@@ -319,6 +324,7 @@ export function RecommendationCard({
                 onClick={handleReject}
                 disabled={actionLoading}
                 className="bg-red-600 text-white hover:bg-red-700"
+                aria-label={`Reject recommendation ${recommendation.title}`}
               >
                 ✗ Reject
               </Button>
@@ -326,6 +332,7 @@ export function RecommendationCard({
                 variant="ghost"
                 onClick={handleFlag}
                 disabled={actionLoading}
+                aria-label={`Flag recommendation ${recommendation.title} for review`}
               >
                 🚩 Flag
               </Button>
