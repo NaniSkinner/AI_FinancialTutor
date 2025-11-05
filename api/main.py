@@ -49,10 +49,20 @@ try:
     from users import router as users_router
     from audit import router as audit_router
     from alerts import router as alerts_router
+    from personas import router as personas_router
     ROUTERS_AVAILABLE = True
-except ImportError:
+except ImportError as e:
     ROUTERS_AVAILABLE = False
-    logger.warning("Router modules not yet created")
+    logger.warning(f"Router modules not yet created: {e}")
+
+# Try to import personas router separately (since it's newly added)
+try:
+    if not 'personas_router' in dir():
+        from personas import router as personas_router
+    PERSONAS_ROUTER_AVAILABLE = True
+except ImportError as e:
+    PERSONAS_ROUTER_AVAILABLE = False
+    logger.warning(f"Personas router not available: {e}")
 
 
 # ========================================================================
@@ -155,7 +165,8 @@ def root():
             "recommendations": "/api/operator/recommendations",
             "users": "/api/operator/users",
             "audit": "/api/operator/audit-logs",
-            "stats": "/api/operator/stats"
+            "stats": "/api/operator/stats",
+            "personas": "/api/personas"
         }
     }
 
@@ -220,9 +231,20 @@ if ROUTERS_AVAILABLE:
         tags=["Alerts"]
     )
     
-    print("✓ All routers registered successfully")
+    print("✓ All operator routers registered successfully")
 else:
-    print("⚠️  Routers not yet available - create recommendations.py, users.py, audit.py, alerts.py")
+    print("⚠️  Operator routers not yet available - create recommendations.py, users.py, audit.py, alerts.py")
+
+# Register personas router separately (newly added)
+if PERSONAS_ROUTER_AVAILABLE:
+    app.include_router(
+        personas_router,
+        prefix="/api",
+        tags=["Personas"]
+    )
+    print("✓ Personas router registered successfully")
+else:
+    print("⚠️  Personas router not available - create personas.py")
 
 
 # ========================================================================

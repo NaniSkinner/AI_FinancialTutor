@@ -310,3 +310,62 @@ class AuditLogFilters(BaseModel):
     end_date: Optional[str] = None
     limit: int = Field(default=100, le=1000)
 
+
+# ========================================================================
+# PERSONA SCHEMAS
+# ========================================================================
+
+class PersonaAssignmentRequest(BaseModel):
+    """Request to assign persona to a user"""
+    window_type: str = Field(default="30d", description="Time window: '30d' or '180d'")
+    
+    @validator('window_type')
+    def validate_window_type(cls, v):
+        if v not in ['30d', '180d']:
+            raise ValueError('window_type must be either "30d" or "180d"')
+        return v
+
+
+class PersonaAssignment(BaseModel):
+    """Persona assignment result"""
+    user_id: str
+    primary_persona: str
+    primary_match_strength: str
+    secondary_personas: List[str] = []
+    criteria_met: Dict[str, Any]
+    all_matches: List[str]
+    assigned_at: str
+    window_type: Optional[str] = None
+
+
+class PersonaTransitionRequest(BaseModel):
+    """Request to detect persona transition"""
+    window_type: str = Field(default="30d", description="Time window: '30d' or '180d'")
+    
+    @validator('window_type')
+    def validate_window_type(cls, v):
+        if v not in ['30d', '180d']:
+            raise ValueError('window_type must be either "30d" or "180d"')
+        return v
+
+
+class PersonaTransition(BaseModel):
+    """Persona transition details"""
+    user_id: str
+    transition_detected: bool
+    from_persona: Optional[str] = None
+    to_persona: Optional[str] = None
+    transition_date: Optional[str] = None
+    days_in_previous_persona: Optional[int] = None
+    is_positive_transition: Optional[bool] = None
+    celebration_message: Optional[str] = None
+    milestone_achieved: Optional[str] = None
+    achievement_title: Optional[str] = None
+
+
+class TransitionHistoryResponse(BaseModel):
+    """Response containing user's transition history"""
+    user_id: str
+    transitions: List[Dict[str, Any]]
+    total_transitions: int
+
