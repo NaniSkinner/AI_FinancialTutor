@@ -5,6 +5,7 @@ import { DashboardHeader } from "@/components/USER/DashboardHeader";
 import { HeroInsight } from "@/components/USER/HeroInsight";
 import { FinancialSnapshot } from "@/components/USER/FinancialSnapshot";
 import { RecommendationsFeed } from "@/components/USER/RecommendationsFeed";
+import { QuickTools } from "@/components/USER/QuickTools";
 import { ChatWidget } from "@/components/ChatWidget";
 import { getUserDashboard } from "@/lib/api";
 import type { DashboardResponse } from "@/lib/types";
@@ -78,6 +79,9 @@ export default function DashboardPage() {
 
           {/* Financial Snapshot */}
           <FinancialSnapshot signals={dashboardData.signals} />
+
+          {/* Quick Tools */}
+          <QuickTools />
 
           {/* Recommendations Feed */}
           <RecommendationsFeed

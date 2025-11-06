@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bell, Settings, User, LogOut, Shield } from "lucide-react";
+import { Bell, Settings, User, LogOut, Shield, Calculator } from "lucide-react";
 import { getInitials } from "@/lib/utils";
 
 interface DashboardHeaderProps {
@@ -34,6 +34,15 @@ export function DashboardHeader({ userName, avatarUrl }: DashboardHeaderProps) {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-3">
+            {/* Tools/Calculators */}
+            <button
+              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              onClick={() => router.push("/dashboard/tools")}
+              title="Financial Calculators"
+            >
+              <Calculator className="h-5 w-5" />
+            </button>
+
             {/* Notifications */}
             <button
               className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"

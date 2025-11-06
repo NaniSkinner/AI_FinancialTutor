@@ -83,6 +83,13 @@ export default function OperatorDashboard() {
                 <span>📊</span>
                 <span>Analytics</span>
               </a>
+              <a
+                href="/calculators"
+                className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors flex items-center gap-1"
+              >
+                <span>🧮</span>
+                <span>Calculators</span>
+              </a>
 
               {/* Quick Stats */}
               <div className="text-sm text-gray-600">
