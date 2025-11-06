@@ -11,11 +11,13 @@ export function AlertPanel() {
   }
 
   return (
-    <div className="bg-yellow-50 border-b border-yellow-200">
+    <div className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-start gap-3">
           <div className="shrink-0">
-            <span className="text-yellow-600 text-xl">⚠️</span>
+            <span className="text-yellow-600 dark:text-yellow-400 text-xl">
+              ⚠️
+            </span>
           </div>
 
           <div className="flex-1 space-y-2">

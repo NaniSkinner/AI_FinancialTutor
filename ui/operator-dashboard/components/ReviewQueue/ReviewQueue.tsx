@@ -145,8 +145,8 @@ export function ReviewQueue() {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-800">
+      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+        <p className="text-red-800 dark:text-red-300">
           Failed to load recommendations. Please try again.
         </p>
       </div>
@@ -161,10 +161,12 @@ export function ReviewQueue() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900">Review Queue</h2>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          Review Queue
+        </h2>
 
         <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
             {recommendations?.length || 0} pending recommendation
             {recommendations?.length !== 1 ? "s" : ""}
           </div>
@@ -238,17 +240,17 @@ export function ReviewQueue() {
 
       {/* Select All Checkbox */}
       {recommendations && recommendations.length > 0 && (
-        <div className="flex items-center gap-2 py-2 px-4 bg-gray-50 rounded-lg">
+        <div className="flex items-center gap-2 py-2 px-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <input
             type="checkbox"
             id="select-all"
             checked={selectedIds.length === recommendations.length}
             onChange={handleSelectAll}
-            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+            className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
           />
           <label
             htmlFor="select-all"
-            className="text-sm text-gray-700 cursor-pointer"
+            className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer"
           >
             Select all ({recommendations.length})
           </label>

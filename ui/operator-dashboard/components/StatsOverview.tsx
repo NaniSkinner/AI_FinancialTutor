@@ -1,6 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
+import {
+  Download,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  FileText,
+} from "lucide-react";
 import { useOperatorStats } from "@/hooks/useOperatorStats";
 import { Spinner } from "@/components/Common/Spinner";
 import { exportStatsToCsv } from "@/lib/export";
@@ -33,97 +41,118 @@ export function StatsOverview() {
   }
 
   if (error) {
-    return <div className="text-sm text-red-600">Failed to load stats</div>;
+    return (
+      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+        <p className="text-sm text-red-600 dark:text-red-400">
+          Failed to load stats
+        </p>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-gray-900">Overview</h2>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          Overview
+        </h2>
         <button
           onClick={handleExport}
           disabled={isExporting}
-          className="text-xs text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+          className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           title="Export stats to CSV"
         >
           {isExporting ? (
-            <svg
-              className="animate-spin h-3 w-3"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              />
-            </svg>
+            <Spinner size="sm" />
           ) : (
-            <svg
-              className="h-3 w-3"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-              />
-            </svg>
+            <Download className="h-4 w-4" />
           )}
-          <span>Export</span>
         </button>
       </div>
 
       {/* Pending Recommendations */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="text-sm text-gray-600">Pending Review</div>
-        <div className="text-3xl font-bold text-orange-600 mt-1">
-          {stats?.pending || 0}
+      <div className="bg-white dark:bg-card rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-lg transition-all duration-200">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+              Pending Review
+            </div>
+            <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+              {stats?.pending || 0}
+            </div>
+          </div>
+          <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-xl">
+            <FileText className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+          </div>
         </div>
       </div>
 
       {/* Approved Today */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="text-sm text-gray-600">Approved Today</div>
-        <div className="text-3xl font-bold text-green-600 mt-1">
-          {stats?.approved_today || 0}
+      <div className="bg-white dark:bg-card rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-lg transition-all duration-200">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+              Approved Today
+            </div>
+            <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+              {stats?.approved_today || 0}
+            </div>
+          </div>
+          <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
+            <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+          </div>
         </div>
       </div>
 
       {/* Rejected Today */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="text-sm text-gray-600">Rejected Today</div>
-        <div className="text-3xl font-bold text-red-600 mt-1">
-          {stats?.rejected_today || 0}
+      <div className="bg-white dark:bg-card rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-lg transition-all duration-200">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+              Rejected Today
+            </div>
+            <div className="text-3xl font-bold text-red-600 dark:text-red-400">
+              {stats?.rejected_today || 0}
+            </div>
+          </div>
+          <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-xl">
+            <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+          </div>
         </div>
       </div>
 
       {/* Flagged Items */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="text-sm text-gray-600">Flagged Items</div>
-        <div className="text-3xl font-bold text-yellow-600 mt-1">
-          {stats?.flagged || 0}
+      <div className="bg-white dark:bg-card rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-lg transition-all duration-200">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+              Flagged Items
+            </div>
+            <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
+              {stats?.flagged || 0}
+            </div>
+          </div>
+          <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl">
+            <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+          </div>
         </div>
       </div>
 
       {/* Average Review Time */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="text-sm text-gray-600">Avg Review Time</div>
-        <div className="text-2xl font-bold text-gray-900 mt-1">
-          {stats?.avg_review_time_seconds || 0}s
+      <div className="bg-white dark:bg-card rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-lg transition-all duration-200">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+              Avg Review Time
+            </div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {stats?.avg_review_time_seconds || 0}
+              <span className="text-xl">s</span>
+            </div>
+          </div>
+          <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-xl">
+            <Clock className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+          </div>
         </div>
       </div>
     </div>

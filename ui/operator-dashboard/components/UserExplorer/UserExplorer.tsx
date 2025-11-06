@@ -19,8 +19,8 @@ export function UserExplorer() {
   const { data: userData, isLoading, error } = useUserSignals(selectedUserId);
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">
+    <div className="bg-white dark:bg-card rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
         User Signal Explorer
       </h2>
 
@@ -33,32 +33,34 @@ export function UserExplorer() {
           {isLoading ? (
             <div className="text-center py-8">
               <Spinner size="lg" />
-              <p className="text-gray-500 mt-2">Loading user data...</p>
+              <p className="text-gray-500 dark:text-gray-400 mt-2">
+                Loading user data...
+              </p>
             </div>
           ) : error ? (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-red-800">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+              <p className="text-red-800 dark:text-red-300">
                 Failed to load user data. Please try again.
               </p>
             </div>
           ) : userData ? (
             <>
               {/* User Info Header */}
-              <div className="border-b border-gray-200 pb-4">
+              <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-900">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                     {userData.user_id}
                   </h3>
                   <button
                     onClick={() => setSelectedUserId(null)}
-                    className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                   >
                     Clear
                   </button>
                 </div>
 
                 <div className="mt-2 flex items-center gap-4 flex-wrap">
-                  <div className="text-sm text-gray-600 flex items-center gap-2">
+                  <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
                     <span className="font-medium">Primary Persona:</span>
                     <Badge
                       className={getPersonaColor(userData.persona_30d.primary)}
@@ -68,7 +70,7 @@ export function UserExplorer() {
                   </div>
 
                   {userData.persona_30d.secondary && (
-                    <div className="text-sm text-gray-600 flex items-center gap-2">
+                    <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
                       <span className="font-medium">Secondary:</span>
                       <Badge
                         className={getPersonaColor(
@@ -80,14 +82,14 @@ export function UserExplorer() {
                     </div>
                   )}
 
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
                     <span className="font-medium">Match Strength: </span>
-                    <span className="font-semibold text-gray-900">
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">
                       {(userData.persona_30d.match_strength * 100).toFixed(0)}%
                     </span>
                   </div>
 
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
                     <span className="font-medium">Window: </span>
                     30 days
                   </div>
@@ -96,7 +98,7 @@ export function UserExplorer() {
 
               {/* Signals Grid */}
               <div>
-                <h4 className="text-sm font-medium text-gray-900 mb-3">
+                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
                   Behavioral Signals
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -124,15 +126,17 @@ export function UserExplorer() {
               </div>
 
               {/* Persona History Timeline */}
-              <div className="border-t border-gray-200 pt-6">
-                <h4 className="text-sm font-medium text-gray-900 mb-4">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-4">
                   Persona History (180 days)
                 </h4>
                 <PersonaTimeline userId={selectedUserId} />
               </div>
             </>
           ) : (
-            <div className="text-center py-8 text-gray-500">User not found</div>
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              User not found
+            </div>
           )}
         </div>
       )}

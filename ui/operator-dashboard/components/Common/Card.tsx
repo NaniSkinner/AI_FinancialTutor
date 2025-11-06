@@ -9,7 +9,7 @@ export function Card({ children, className, ...props }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-lg border border-gray-200 bg-white shadow-sm",
+        "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-card shadow-md hover:shadow-lg transition-all duration-200",
         className
       )}
       {...props}
@@ -39,7 +39,7 @@ export function CardTitle({ children, className, ...props }: CardTitleProps) {
   return (
     <h3
       className={cn(
-        "text-2xl font-semibold leading-none tracking-tight",
+        "text-xl font-semibold leading-none tracking-tight text-gray-900 dark:text-gray-100",
         className
       )}
       {...props}
@@ -60,7 +60,10 @@ export function CardDescription({
   ...props
 }: CardDescriptionProps) {
   return (
-    <p className={cn("text-sm text-gray-500", className)} {...props}>
+    <p
+      className={cn("text-sm text-gray-500 dark:text-gray-400", className)}
+      {...props}
+    >
       {children}
     </p>
   );
@@ -77,6 +80,22 @@ export function CardContent({
 }: CardContentProps) {
   return (
     <div className={cn("p-6 pt-0", className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
+interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+}
+
+export function CardFooter({
+  children,
+  className,
+  ...props
+}: CardFooterProps) {
+  return (
+    <div className={cn("flex items-center p-6 pt-0", className)} {...props}>
       {children}
     </div>
   );

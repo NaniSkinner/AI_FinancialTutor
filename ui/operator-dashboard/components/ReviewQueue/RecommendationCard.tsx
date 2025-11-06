@@ -195,12 +195,14 @@ export function RecommendationCard({
 
   return (
     <div
-      className={`bg-white rounded-lg border-2 ${
-        isSelected ? "border-indigo-500" : "border-gray-200"
+      className={`bg-white dark:bg-card rounded-lg border-2 ${
+        isSelected
+          ? "border-indigo-500 dark:border-indigo-400"
+          : "border-gray-200 dark:border-gray-700"
       } overflow-hidden transition-colors`}
     >
       {/* Card Header */}
-      <div className="p-4 bg-gray-50 border-b border-gray-200">
+      <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Checkbox */}
@@ -208,7 +210,7 @@ export function RecommendationCard({
               type="checkbox"
               checked={isSelected}
               onChange={onToggleSelect}
-              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+              className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
               aria-label={`Select recommendation ${recommendation.id}`}
             />
 
@@ -223,20 +225,20 @@ export function RecommendationCard({
             </Badge>
 
             {/* Content Type */}
-            <Badge className="bg-blue-100 text-blue-800">
+            <Badge className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
               {recommendation.type}
             </Badge>
 
             {/* Read Time */}
             {recommendation.read_time_minutes && (
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
                 ⏱ {recommendation.read_time_minutes} min
               </span>
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               User: {recommendation.user_id}
             </span>
 
@@ -266,19 +268,19 @@ export function RecommendationCard({
       {/* Card Content */}
       <div className="p-4 space-y-4">
         {/* Title */}
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {recommendation.title}
         </h3>
 
         {/* Content URL */}
         {recommendation.content_url && (
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
             <span className="font-medium">Content: </span>
             <a
               href={recommendation.content_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-indigo-600 hover:text-indigo-800 underline"
+              className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 underline"
             >
               {recommendation.content_url}
             </a>
@@ -288,7 +290,7 @@ export function RecommendationCard({
         {/* Rationale */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-gray-700">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Rationale
             </label>
             {!isModifying && (
@@ -307,12 +309,12 @@ export function RecommendationCard({
             <textarea
               value={modifiedRationale}
               onChange={(e) => setModifiedRationale(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               rows={4}
               aria-label="Edit recommendation rationale"
             />
           ) : (
-            <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">
+            <p className="text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
               {recommendation.rationale}
             </p>
           )}
@@ -320,35 +322,41 @@ export function RecommendationCard({
 
         {/* Guardrails Status */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Guardrail Checks
           </label>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               {recommendation.guardrails_passed.tone_check ? (
-                <span className="text-green-600">✓</span>
+                <span className="text-green-600 dark:text-green-400">✓</span>
               ) : (
-                <span className="text-red-600">✗</span>
+                <span className="text-red-600 dark:text-red-400">✗</span>
               )}
-              <span className="text-sm text-gray-600">Tone Check</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                Tone Check
+              </span>
             </div>
 
             <div className="flex items-center gap-2">
               {recommendation.guardrails_passed.advice_check ? (
-                <span className="text-green-600">✓</span>
+                <span className="text-green-600 dark:text-green-400">✓</span>
               ) : (
-                <span className="text-red-600">✗</span>
+                <span className="text-red-600 dark:text-red-400">✗</span>
               )}
-              <span className="text-sm text-gray-600">Advice Check</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                Advice Check
+              </span>
             </div>
 
             <div className="flex items-center gap-2">
               {recommendation.guardrails_passed.eligibility_check ? (
-                <span className="text-green-600">✓</span>
+                <span className="text-green-600 dark:text-green-400">✓</span>
               ) : (
-                <span className="text-red-600">✗</span>
+                <span className="text-red-600 dark:text-red-400">✗</span>
               )}
-              <span className="text-sm text-gray-600">Eligibility</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                Eligibility
+              </span>
             </div>
           </div>
         </div>
@@ -360,13 +368,13 @@ export function RecommendationCard({
 
         {/* Undo Action Banner */}
         {showUndoButton && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
+          <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4 mt-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm font-medium text-yellow-900">
+                <div className="text-sm font-medium text-yellow-900 dark:text-yellow-200">
                   ⚠️ Action can be undone
                 </div>
-                <div className="text-xs text-yellow-700 mt-1">
+                <div className="text-xs text-yellow-700 dark:text-yellow-400 mt-1">
                   Time remaining: {undoCountdown}s
                 </div>
               </div>
@@ -375,7 +383,7 @@ export function RecommendationCard({
                 variant="outline"
                 onClick={handleUndo}
                 disabled={actionLoading}
-                className="bg-white hover:bg-yellow-100 border-yellow-300 text-yellow-900"
+                className="bg-white dark:bg-gray-800 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 border-yellow-300 dark:border-yellow-600 text-yellow-900 dark:text-yellow-200"
                 aria-label={`Undo last action on recommendation ${recommendation.title}`}
               >
                 ⟲ Undo
@@ -386,20 +394,20 @@ export function RecommendationCard({
 
         {/* Decision Traces (Expandable) */}
         {showTraces && (
-          <div className="border-t border-gray-200 pt-4 mt-4">
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
             <DecisionTraces recommendationId={recommendation.id} />
           </div>
         )}
 
         {/* Operator Notes (Expandable) */}
         {showNotes && (
-          <div className="border-t border-gray-200 pt-4 mt-4">
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
             <NotesPanel recommendationId={recommendation.id} />
           </div>
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-2 pt-4 border-t border-gray-200">
+        <div className="flex items-center gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
           {isModifying ? (
             <>
               <Button

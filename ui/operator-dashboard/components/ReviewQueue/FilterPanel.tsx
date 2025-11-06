@@ -19,13 +19,13 @@ interface Props {
  */
 export function FilterPanel({ filters, onFiltersChange }: Props) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
+    <div className="bg-white dark:bg-card rounded-lg border border-gray-200 dark:border-gray-700 p-4">
       <div className="grid grid-cols-3 gap-4">
         {/* Persona Filter */}
         <div>
           <label
             htmlFor="persona-filter"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
           >
             Persona
           </label>
@@ -35,7 +35,7 @@ export function FilterPanel({ filters, onFiltersChange }: Props) {
             onChange={(e) =>
               onFiltersChange({ ...filters, persona: e.target.value })
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           >
             <option value="all">All Personas</option>
             <option value="high_utilization">High Utilization</option>
@@ -50,7 +50,7 @@ export function FilterPanel({ filters, onFiltersChange }: Props) {
         <div>
           <label
             htmlFor="priority-filter"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
           >
             Priority
           </label>
@@ -60,7 +60,7 @@ export function FilterPanel({ filters, onFiltersChange }: Props) {
             onChange={(e) =>
               onFiltersChange({ ...filters, priority: e.target.value })
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           >
             <option value="all">All Priorities</option>
             <option value="high">High</option>
@@ -73,7 +73,7 @@ export function FilterPanel({ filters, onFiltersChange }: Props) {
         <div>
           <label
             htmlFor="status-filter"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
           >
             Status
           </label>
@@ -83,7 +83,7 @@ export function FilterPanel({ filters, onFiltersChange }: Props) {
             onChange={(e) =>
               onFiltersChange({ ...filters, status: e.target.value })
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           >
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>

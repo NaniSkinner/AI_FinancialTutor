@@ -24,7 +24,7 @@ export function Checkbox({
         checked={checked}
         onCheckedChange={onCheckedChange}
         className={cn(
-          "h-4 w-4 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600",
+          "h-4 w-4 rounded border-2 border-gray-400 dark:border-gray-300 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:border-primary",
           className
         )}
       >

@@ -45,10 +45,10 @@ export function BulkActions({
 
   return (
     <>
-      <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+      <div className="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 rounded-lg p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-indigo-900">
+            <span className="text-sm font-medium text-indigo-900 dark:text-indigo-200">
               {selectedCount} recommendation{selectedCount !== 1 ? "s" : ""}{" "}
               selected
             </span>
@@ -75,13 +75,13 @@ export function BulkActions({
         title="Confirm Bulk Approval"
       >
         <div className="space-y-4">
-          <p className="text-gray-700">
+          <p className="text-gray-700 dark:text-gray-300">
             Are you sure you want to approve <strong>{selectedCount}</strong>{" "}
             recommendation{selectedCount !== 1 ? "s" : ""}?
           </p>
 
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-            <p className="text-sm text-yellow-800">
+          <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg p-3">
+            <p className="text-sm text-yellow-800 dark:text-yellow-300">
               ⚠️ This action will immediately send these recommendations to
               users. Please ensure you&apos;ve reviewed all selected items.
             </p>

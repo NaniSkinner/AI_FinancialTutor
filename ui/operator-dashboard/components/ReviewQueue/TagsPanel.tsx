@@ -28,14 +28,22 @@ interface TagsPanelProps {
 
 // Tag color mapping for better visual organization
 const TAG_COLORS: Record<string, string> = {
-  needs_review: "bg-yellow-100 text-yellow-800 border-yellow-300",
-  edge_case: "bg-purple-100 text-purple-800 border-purple-300",
-  training_example: "bg-green-100 text-green-800 border-green-300",
-  policy_question: "bg-blue-100 text-blue-800 border-blue-300",
-  tone_concern: "bg-orange-100 text-orange-800 border-orange-300",
-  eligibility_question: "bg-indigo-100 text-indigo-800 border-indigo-300",
-  llm_error: "bg-red-100 text-red-800 border-red-300",
-  great_example: "bg-teal-100 text-teal-800 border-teal-300",
+  needs_review:
+    "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 border-yellow-300 dark:border-yellow-800",
+  edge_case:
+    "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border-purple-300 dark:border-purple-800",
+  training_example:
+    "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-300 dark:border-green-800",
+  policy_question:
+    "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-800",
+  tone_concern:
+    "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 border-orange-300 dark:border-orange-800",
+  eligibility_question:
+    "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800",
+  llm_error:
+    "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border-red-300 dark:border-red-800",
+  great_example:
+    "bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300 border-teal-300 dark:border-teal-800",
 };
 
 export function TagsPanel({ recommendationId }: TagsPanelProps) {
@@ -91,8 +99,12 @@ export function TagsPanel({ recommendationId }: TagsPanelProps) {
   if (isLoading) {
     return (
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Tags</label>
-        <div className="text-sm text-gray-500">Loading tags...</div>
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Tags
+        </label>
+        <div className="text-sm text-gray-500 dark:text-gray-400">
+          Loading tags...
+        </div>
       </div>
     );
   }
@@ -100,8 +112,12 @@ export function TagsPanel({ recommendationId }: TagsPanelProps) {
   if (error) {
     return (
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Tags</label>
-        <div className="text-sm text-red-600">Failed to load tags</div>
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Tags
+        </label>
+        <div className="text-sm text-red-600 dark:text-red-400">
+          Failed to load tags
+        </div>
       </div>
     );
   }
@@ -109,7 +125,7 @@ export function TagsPanel({ recommendationId }: TagsPanelProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-gray-700">
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
           Tags {tags && tags.length > 0 && `(${tags.length})`}
         </label>
       </div>
@@ -123,7 +139,7 @@ export function TagsPanel({ recommendationId }: TagsPanelProps) {
               tag.tag_name.replace(/_/g, " ");
             const colorClass =
               TAG_COLORS[tag.tag_name] ||
-              "bg-gray-100 text-gray-800 border-gray-300";
+              "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 border-gray-300 dark:border-gray-700";
 
             return (
               <span
@@ -133,7 +149,7 @@ export function TagsPanel({ recommendationId }: TagsPanelProps) {
                 {displayName}
                 <button
                   onClick={() => handleRemoveTag(tag.tag_id, tag.tag_name)}
-                  className="ml-1 hover:opacity-70 focus:outline-none"
+                  className="ml-1 hover:opacity-70 focus:outline-none transition-opacity"
                   aria-label={`Remove ${displayName} tag`}
                   title={`Remove tag (added by ${tag.tagged_by})`}
                 >
@@ -143,7 +159,7 @@ export function TagsPanel({ recommendationId }: TagsPanelProps) {
             );
           })
         ) : (
-          <div className="text-sm text-gray-500 italic">
+          <div className="text-sm text-gray-500 dark:text-gray-400 italic">
             No tags yet. Add tags to categorize this recommendation.
           </div>
         )}
@@ -158,7 +174,7 @@ export function TagsPanel({ recommendationId }: TagsPanelProps) {
                   e.target.value = ""; // Reset select
                 }
               }}
-              className="text-xs border border-indigo-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="text-xs border border-indigo-300 dark:border-indigo-700 rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               disabled={isAdding || unusedTags.length === 0}
             >
               <option value="">
@@ -172,13 +188,17 @@ export function TagsPanel({ recommendationId }: TagsPanelProps) {
                 </option>
               ))}
             </select>
-            {addError && <div className="text-xs text-red-600">{addError}</div>}
+            {addError && (
+              <div className="text-xs text-red-600 dark:text-red-400">
+                {addError}
+              </div>
+            )}
             <button
               onClick={() => {
                 setShowAddTag(false);
                 setAddError(null);
               }}
-              className="text-xs text-gray-600 hover:text-gray-800"
+              className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
             >
               Cancel
             </button>
@@ -187,7 +207,7 @@ export function TagsPanel({ recommendationId }: TagsPanelProps) {
           unusedTags.length > 0 && (
             <button
               onClick={() => setShowAddTag(true)}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               + Add Tag
             </button>
@@ -197,8 +217,8 @@ export function TagsPanel({ recommendationId }: TagsPanelProps) {
 
       {/* Tag Legend (optional - helps operators understand tag meanings) */}
       {tags && tags.length === 0 && !showAddTag && (
-        <details className="text-xs text-gray-600 mt-2">
-          <summary className="cursor-pointer hover:text-gray-800">
+        <details className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+          <summary className="cursor-pointer hover:text-gray-800 dark:hover:text-gray-200">
             Available tag categories
           </summary>
           <ul className="mt-2 space-y-1 ml-4 list-disc">

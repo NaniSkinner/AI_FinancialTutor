@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import {
   CreditCard,
   PiggyBank,
@@ -10,6 +11,8 @@ import {
   Minus,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { SpendingChart } from "./SpendingChart";
+import { CategoryBreakdown } from "./CategoryBreakdown";
 import type { UserSignals } from "@/lib/types";
 
 interface FinancialSnapshotProps {
@@ -102,49 +105,67 @@ export function FinancialSnapshot({ signals }: FinancialSnapshotProps) {
   ];
 
   return (
-    <div>
-      <h2 className="text-xl font-bold text-gray-900 mb-4">
-        Your Financial Snapshot
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {snapshots.map((snapshot, idx) => (
-          <div
-            key={idx}
-            className="bg-white rounded-lg border border-gray-200 p-4"
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <p className="text-sm text-gray-600 mb-1">{snapshot.label}</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {snapshot.value}
-                </p>
-                {snapshot.subtitle && (
-                  <p className="text-sm text-gray-500 mt-1">
-                    {snapshot.subtitle}
+    <div className="space-y-8">
+      {/* Metric Cards */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+          Your Financial Snapshot
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {snapshots.map((snapshot, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: idx * 0.1 }}
+              className="bg-white dark:bg-card rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-all duration-200"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    {snapshot.label}
                   </p>
-                )}
+                  <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                    {snapshot.value}
+                  </p>
+                  {snapshot.subtitle && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                      {snapshot.subtitle}
+                    </p>
+                  )}
+                </div>
+                <div className={`p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900`}>
+                  <snapshot.icon
+                    className={`h-6 w-6 ${getStatusColor(snapshot.status)}`}
+                  />
+                </div>
               </div>
-              <snapshot.icon
-                className={`h-8 w-8 ${getStatusColor(snapshot.status)}`}
-              />
-            </div>
 
-            {snapshot.trend && (
-              <div className="mt-2 flex items-center gap-1 text-sm">
-                {snapshot.trend === "up" && (
-                  <ArrowUp className="h-4 w-4 text-green-600" />
-                )}
-                {snapshot.trend === "down" && (
-                  <ArrowDown className="h-4 w-4 text-red-600" />
-                )}
-                {snapshot.trend === "neutral" && (
-                  <Minus className="h-4 w-4 text-gray-600" />
-                )}
-                <span className="text-gray-500">vs. last month</span>
-              </div>
-            )}
-          </div>
-        ))}
+              {snapshot.trend && (
+                <div className="mt-4 flex items-center gap-1.5 text-sm">
+                  {snapshot.trend === "up" && (
+                    <ArrowUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  )}
+                  {snapshot.trend === "down" && (
+                    <ArrowDown className="h-4 w-4 text-red-600 dark:text-red-400" />
+                  )}
+                  {snapshot.trend === "neutral" && (
+                    <Minus className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  )}
+                  <span className="text-gray-500 dark:text-gray-400">
+                    vs. last month
+                  </span>
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <SpendingChart />
+        <CategoryBreakdown />
       </div>
     </div>
   );

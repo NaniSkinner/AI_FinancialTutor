@@ -79,22 +79,22 @@ export default function CalculatorsPage() {
     })) || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-background transition-colors">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-white dark:bg-card border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 Financial Calculators
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 dark:text-gray-400 mt-1">
                 Interactive tools to explore financial scenarios
               </p>
             </div>
             <a
               href="/"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+              className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
             >
               ← Back to Dashboard
             </a>
@@ -104,33 +104,33 @@ export default function CalculatorsPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* User Selection */}
-        <div className="mb-8 bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="mb-8 bg-white dark:bg-card rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
             Select User (Optional)
           </h2>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
             Choose a user to pre-fill calculators with their financial data, or
             use the calculators with manual input.
           </p>
           <UserSearch onUserSelect={setSelectedUserId} />
 
           {selectedUserId && (
-            <div className="mt-4 flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+            <div className="mt-4 flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
               {isLoading ? (
                 <div className="flex items-center gap-2">
                   <Spinner size="sm" />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
                     Loading user data...
                   </span>
                 </div>
               ) : userData ? (
                 <>
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-gray-900 dark:text-gray-100">
                       User: {userData.user_id}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
                         Primary Persona:
                       </span>
                       <Badge
@@ -144,13 +144,15 @@ export default function CalculatorsPage() {
                   </div>
                   <button
                     onClick={() => setSelectedUserId(null)}
-                    className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                   >
                     Clear
                   </button>
                 </>
               ) : (
-                <p className="text-sm text-red-600">Failed to load user data</p>
+                <p className="text-sm text-red-600 dark:text-red-400">
+                  Failed to load user data
+                </p>
               )}
             </div>
           )}

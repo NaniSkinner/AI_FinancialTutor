@@ -29,16 +29,16 @@ export function RecommendationCard({
   const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const priorityColors = {
-    high: "border-red-300 bg-red-50",
-    medium: "border-yellow-300 bg-yellow-50",
-    low: "border-blue-300 bg-blue-50",
+  const priorityAccentColors = {
+    high: "border-l-red-500 dark:border-l-red-400",
+    medium: "border-l-yellow-500 dark:border-l-yellow-400",
+    low: "border-l-blue-500 dark:border-l-blue-400",
   };
 
-  const priorityBadgeColors = {
-    high: "bg-red-100 text-red-800 border-red-200",
-    medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
-    low: "bg-blue-100 text-blue-800 border-blue-200",
+  const priorityDotColors = {
+    high: "bg-red-500",
+    medium: "bg-yellow-500",
+    low: "bg-blue-500",
   };
 
   // Mock content for articles
@@ -144,52 +144,63 @@ You're already making great progress. Keep going!`,
 
   return (
     <div
-      className={`rounded-lg border-2 transition-all ${priorityColors[recommendation.priority]} ${
+      className={`rounded-xl border-l-4 border border-gray-200 dark:border-gray-700 ${priorityAccentColors[recommendation.priority]} bg-white dark:bg-card transition-all duration-200 hover:shadow-lg ${
         completed ? "opacity-60" : ""
       }`}
     >
       {/* Card Header */}
-      <div className="p-4">
+      <div className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            {/* Badges */}
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <span
-                className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${
-                  priorityBadgeColors[recommendation.priority]
-                }`}
-              >
-                {recommendation.priority.toUpperCase()}
-              </span>
-              <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-white border border-gray-300">
+            {/* Badges and Metadata */}
+            <div className="flex items-center gap-3 mb-3 flex-wrap">
+              {/* Priority Dot */}
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-2 h-2 rounded-full ${priorityDotColors[recommendation.priority]}`}
+                />
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase">
+                  {recommendation.priority}
+                </span>
+              </div>
+
+              {/* Type Badge */}
+              <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
                 {recommendation.type}
               </span>
+
+              {/* Read Time */}
               {recommendation.read_time_minutes && (
-                <span className="text-sm text-gray-600 flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
+                <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5" />
                   {recommendation.read_time_minutes} min
                 </span>
               )}
+
+              {/* Completed Badge */}
               {completed && (
-                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-green-100 text-green-800 border border-green-200">
-                  ✓ Completed
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                  <Check className="h-3.5 w-3.5" />
+                  Completed
                 </span>
               )}
             </div>
 
             {/* Title */}
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3 leading-snug">
               {recommendation.title}
             </h3>
 
             {/* Rationale (preview) */}
-            <p className="text-gray-700 text-sm">{recommendation.rationale}</p>
+            <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+              {recommendation.rationale}
+            </p>
           </div>
 
           {/* Expand Button */}
           <button
             onClick={handleExpand}
-            className="ml-4 p-2 text-gray-600 hover:text-gray-900 hover:bg-white/50 rounded-lg transition-colors shrink-0"
+            className="ml-4 p-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all shrink-0"
           >
             {expanded ? (
               <ChevronUp className="h-5 w-5" />
@@ -201,23 +212,25 @@ You're already making great progress. Keep going!`,
 
         {/* Expanded Content */}
         {expanded && (
-          <div className="mt-4 pt-4 border-t border-gray-300 space-y-4">
+          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 space-y-5">
             {/* Full Content */}
             {recommendation.type === "article" && content && (
-              <div className="bg-white rounded-lg p-4">
-                <div className="prose prose-sm max-w-none">
-                  <p className="text-gray-700 whitespace-pre-wrap">{content}</p>
+              <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-5">
+                <div className="prose prose-sm dark:prose-invert max-w-none">
+                  <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
+                    {content}
+                  </p>
                 </div>
               </div>
             )}
 
             {recommendation.type === "calculator" && (
-              <div className="bg-white rounded-lg p-4">
+              <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-8">
                 <div className="text-center py-8">
-                  <div className="text-gray-400 mb-4">
+                  <div className="text-gray-400 dark:text-gray-600 mb-4">
                     <BookOpen className="h-12 w-12 mx-auto" />
                   </div>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 dark:text-gray-400">
                     Interactive calculator would be loaded here
                   </p>
                 </div>
@@ -225,21 +238,21 @@ You're already making great progress. Keep going!`,
             )}
 
             {/* Disclaimer */}
-            <div className="flex gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
-              <p className="text-xs text-blue-900">
+            <div className="flex gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+              <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+              <p className="text-xs text-blue-900 dark:text-blue-300">
                 This is educational information, not financial advice. Consult a
                 licensed financial advisor for personalized guidance.
               </p>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-3 flex-wrap">
               {!completed && (
                 <button
                   onClick={handleComplete}
                   disabled={loading}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-500 dark:to-blue-500 text-white rounded-xl hover:from-indigo-700 hover:to-blue-700 dark:hover:from-indigo-600 dark:hover:to-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
                 >
                   <Check className="h-4 w-4" />
                   {loading ? "Saving..." : "Mark as Complete"}
@@ -250,7 +263,7 @@ You're already making great progress. Keep going!`,
                   href={recommendation.content_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-2 px-5 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <BookOpen className="h-4 w-4" />
                   Read Full Article
