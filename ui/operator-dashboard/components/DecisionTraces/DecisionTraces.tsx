@@ -1,5 +1,6 @@
 import React from "react";
 import { useDecisionTrace } from "@/hooks/useDecisionTrace";
+import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 import { TraceStep } from "./TraceStep";
 import { Spinner } from "@/components/Common/Spinner";
 
@@ -8,6 +9,9 @@ interface Props {
 }
 
 export function DecisionTraces({ recommendationId }: Props) {
+  // Performance monitoring
+  usePerformanceMonitoring("DecisionTraces");
+
   const { data: trace, isLoading, error } = useDecisionTrace(recommendationId);
 
   if (isLoading) {

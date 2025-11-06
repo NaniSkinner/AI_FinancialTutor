@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { useRecommendations } from "@/hooks/useRecommendations";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 import { RecommendationCard } from "./RecommendationCard";
 import { FilterPanel } from "./FilterPanel";
 import { BulkActions } from "./BulkActions";
@@ -21,6 +22,9 @@ import { exportRecommendationsToCsv } from "@/lib/export";
  * - Auto-refresh every 30 seconds
  */
 export function ReviewQueue() {
+  // Performance monitoring
+  usePerformanceMonitoring("ReviewQueue");
+
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
   const [isExporting, setIsExporting] = useState<boolean>(false);

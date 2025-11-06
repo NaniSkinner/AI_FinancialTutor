@@ -70,6 +70,14 @@ except ImportError as e:
     AUTH_ROUTER_AVAILABLE = False
     logger.warning(f"Auth router not available: {e}")
 
+# Try to import notes router
+try:
+    from notes import router as notes_router
+    NOTES_ROUTER_AVAILABLE = True
+except ImportError as e:
+    NOTES_ROUTER_AVAILABLE = False
+    logger.warning(f"Notes router not available: {e}")
+
 
 # ========================================================================
 # FastAPI Application
@@ -119,7 +127,7 @@ app.add_middleware(
 
 
 # ========================================================================
-# Request Logging Middleware
+# Request Logging & Performance Monitoring Middleware
 # ========================================================================
 
 @app.middleware("http")
@@ -127,6 +135,7 @@ async def log_requests(request: Request, call_next):
     """
     Middleware to log all incoming requests and responses
     Logs method, URL, status code, and processing time
+    Also includes performance monitoring to warn on slow requests
     """
     start_time = datetime.now()
     
@@ -146,7 +155,14 @@ async def log_requests(request: Request, call_next):
         f"Time: {process_time:.3f}s"
     )
     
-    # Add processing time header
+    # Warn on slow requests (>1 second)
+    if process_time > 1.0:
+        logger.warning(
+            f"SLOW REQUEST: {request.method} {request.url.path} took {process_time:.2f}s "
+            f"(threshold: 1.0s)"
+        )
+    
+    # Add processing time header (for frontend performance monitoring)
     response.headers["X-Process-Time"] = str(process_time)
     
     return response
@@ -262,6 +278,17 @@ if AUTH_ROUTER_AVAILABLE:
     print("✓ Auth router registered successfully")
 else:
     print("⚠️  Auth router not available - create auth.py")
+
+# Register notes router
+if NOTES_ROUTER_AVAILABLE:
+    app.include_router(
+        notes_router,
+        prefix="/api/operator",
+        tags=["Notes"]
+    )
+    print("✓ Notes router registered successfully")
+else:
+    print("⚠️  Notes router not available - create notes.py")
 
 
 # ========================================================================

@@ -8,10 +8,14 @@ import { StatsOverview } from "@/components/StatsOverview";
 import { UserExplorer } from "@/components/UserExplorer";
 import { KeyboardShortcutsLegend } from "@/components/KeyboardShortcutsLegend";
 import { useAuth } from "@/lib/auth";
+import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 
 type TabType = "review" | "explorer";
 
 export default function OperatorDashboard() {
+  // Performance monitoring
+  usePerformanceMonitoring("OperatorDashboard");
+
   const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
   const [activeTab, setActiveTab] = useState<TabType>("review");
   const [showLogoutMenu, setShowLogoutMenu] = useState(false);

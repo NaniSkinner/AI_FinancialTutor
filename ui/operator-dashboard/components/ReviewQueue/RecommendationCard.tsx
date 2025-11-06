@@ -5,6 +5,7 @@ import { Badge } from "@/components/Common/Badge";
 import { Button } from "@/components/Common/Button";
 import { useToast } from "@/components/Common/Toast";
 import { DecisionTraces } from "@/components/DecisionTraces/DecisionTraces";
+import { NotesPanel } from "./NotesPanel";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import {
   approveRecommendation,
@@ -39,6 +40,7 @@ export function RecommendationCard({
   onAction,
 }: Props) {
   const [showTraces, setShowTraces] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
   const [isModifying, setIsModifying] = useState(false);
   const [modifiedRationale, setModifiedRationale] = useState(
     recommendation.rationale
@@ -246,6 +248,16 @@ export function RecommendationCard({
             >
               {showTraces ? "Hide" : "Show"} Traces
             </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowNotes(!showNotes)}
+              aria-label={`${showNotes ? "Hide" : "Show"} operator notes for ${recommendation.title}`}
+              aria-expanded={showNotes}
+            >
+              📝 {showNotes ? "Hide" : "Show"} Notes
+            </Button>
           </div>
         </div>
       </div>
@@ -370,6 +382,13 @@ export function RecommendationCard({
         {showTraces && (
           <div className="border-t border-gray-200 pt-4 mt-4">
             <DecisionTraces recommendationId={recommendation.id} />
+          </div>
+        )}
+
+        {/* Operator Notes (Expandable) */}
+        {showNotes && (
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <NotesPanel recommendationId={recommendation.id} />
           </div>
         )}
 

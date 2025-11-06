@@ -6,11 +6,15 @@ import { UserSearch } from "./UserSearch";
 import { SignalCard } from "./SignalCard";
 import { PersonaTimeline } from "./PersonaTimeline";
 import { useUserSignals } from "@/hooks/useUserSignals";
+import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 import { Spinner } from "@/components/Common/Spinner";
 import { Badge } from "@/components/Common/Badge";
 import { getPersonaColor, formatPersonaName } from "@/lib/utils";
 
 export function UserExplorer() {
+  // Performance monitoring
+  usePerformanceMonitoring("UserExplorer");
+
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const { data: userData, isLoading, error } = useUserSignals(selectedUserId);
 
