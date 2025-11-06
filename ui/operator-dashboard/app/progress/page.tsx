@@ -73,19 +73,19 @@ export default function ProgressPage() {
       id: "first_login",
       title: "Welcome Aboard",
       earnedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      icon: "🎉",
+      icon: "trophy",
     },
     {
       id: "first_rec_complete",
       title: "First Article Complete",
       earnedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-      icon: "📚",
+      icon: "book",
     },
     {
       id: "calculator_pro",
       title: "Calculator Pro",
       earnedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-      icon: "💰",
+      icon: "calculator",
     },
   ];
 
@@ -186,7 +186,7 @@ export default function ProgressPage() {
                 }}
               >
                 <AchievementCard
-                  icon={achievement.icon || "🏆"}
+                  icon={achievement.icon || "trophy"}
                   title={achievement.title}
                   earnedAt={new Date(achievement.earnedAt)}
                   locked={false}

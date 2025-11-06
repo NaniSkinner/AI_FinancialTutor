@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Trophy } from "lucide-react";
 import { Modal, Badge, Button } from "@/components/Common";
 import { CELEBRATIONS } from "./constants";
 import { formatPersonaName } from "./utils";
@@ -71,7 +72,7 @@ export function TransitionCelebration({
             }}
             className="inline-block"
           >
-            🏆
+            <Trophy className="h-16 w-16 text-yellow-500" />
           </motion.span>
         </motion.div>
 
@@ -106,7 +107,7 @@ export function TransitionCelebration({
             variant="secondary"
             className="text-base px-4 py-2 bg-yellow-100 text-yellow-800 border-yellow-300"
           >
-            ✨ Achievement Unlocked: {celebration.achievement}
+            Achievement Unlocked: {celebration.achievement}
           </Badge>
         </motion.div>
 

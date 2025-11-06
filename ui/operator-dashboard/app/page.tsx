@@ -2,7 +2,14 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BarChart3, Users, LogOut, ChevronDown } from "lucide-react";
+import {
+  BarChart3,
+  Users,
+  LogOut,
+  ChevronDown,
+  ClipboardList,
+  Calculator,
+} from "lucide-react";
 import { ReviewQueue } from "@/components/ReviewQueue/ReviewQueue";
 import { AlertPanel } from "@/components/AlertPanel/AlertPanel";
 import { StatsOverview } from "@/components/StatsOverview";
@@ -83,7 +90,7 @@ export default function OperatorDashboard() {
                 className="p-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 flex items-center gap-2"
                 title="Audit Logs"
               >
-                <span>📋</span>
+                <ClipboardList className="h-5 w-5" />
                 <span className="text-sm font-medium hidden lg:inline">
                   Audit Logs
                 </span>
@@ -103,7 +110,7 @@ export default function OperatorDashboard() {
                 className="p-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 flex items-center gap-2"
                 title="Calculators"
               >
-                <span>🧮</span>
+                <Calculator className="h-5 w-5" />
                 <span className="text-sm font-medium hidden lg:inline">
                   Calculators
                 </span>

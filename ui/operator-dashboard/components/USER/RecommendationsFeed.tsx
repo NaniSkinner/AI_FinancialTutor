@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, Sparkles } from "lucide-react";
+import { TrendingUp, Sparkles, Flame } from "lucide-react";
 import { RecommendationCard } from "./RecommendationCard";
 import type { Recommendation, ProgressStats } from "@/lib/types";
 
@@ -51,7 +51,7 @@ export function RecommendationsFeed({
             </p>
             {progress.streak > 0 && (
               <div className="flex items-center gap-1.5 px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded-full text-xs font-medium">
-                <span>🔥</span>
+                <Flame className="h-3.5 w-3.5" />
                 <span>{progress.streak} day streak!</span>
               </div>
             )}
@@ -85,10 +85,7 @@ export function RecommendationsFeed({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: idx * 0.1 }}
           >
-            <RecommendationCard
-              recommendation={rec}
-              userId={userId}
-            />
+            <RecommendationCard recommendation={rec} userId={userId} />
           </motion.div>
         ))}
       </div>
@@ -105,7 +102,8 @@ export function RecommendationsFeed({
             <TrendingUp className="h-16 w-16 mx-auto" />
           </div>
           <p className="text-gray-900 dark:text-gray-100 font-semibold text-lg mb-2">
-            No {filter !== "all" ? `${filter} priority ` : ""}recommendations yet
+            No {filter !== "all" ? `${filter} priority ` : ""}recommendations
+            yet
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Check back later for personalized learning content.

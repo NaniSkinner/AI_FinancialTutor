@@ -291,38 +291,38 @@ export default function AnalyticsPage() {
         <MetricCard
           label="Total Actions"
           value={analytics.summary.total_actions}
-          icon="📊"
+          icon="chart"
           color="blue"
         />
         <MetricCard
           label="Approval Rate"
           value={`${analytics.summary.approval_rate}%`}
-          icon="✅"
+          icon="check"
           color="green"
         />
         <MetricCard
           label="Flag Rate"
           value={`${analytics.summary.flag_rate}%`}
-          icon="🚩"
+          icon="flag"
           color="yellow"
         />
         <MetricCard
           label="Queue Size"
           value={analytics.summary.queue_size}
-          icon="📋"
+          icon="list"
           color="purple"
           description="Pending recommendations"
         />
         <MetricCard
           label="Avg Processing Time"
           value={`${analytics.summary.avg_processing_time_minutes.toFixed(1)} min`}
-          icon="⏱️"
+          icon="clock"
           color="gray"
         />
         <MetricCard
           label="Recommendations Generated"
           value={analytics.summary.recommendations_generated}
-          icon="✨"
+          icon="sparkles"
           color="blue"
         />
       </div>

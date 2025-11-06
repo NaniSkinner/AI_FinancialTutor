@@ -248,31 +248,31 @@ export const POINT_VALUES = {
 
 export const CELEBRATIONS = {
   high_utilization_to_savings_builder: {
-    title: "🎉 Amazing Progress!",
+    title: "Amazing Progress!",
     message: "You've improved your credit health and started building savings!",
     achievement: "Credit Champion",
     color: "from-green-400 to-blue-500",
   },
   student_to_savings_builder: {
-    title: "🎓 Financial Graduation!",
+    title: "Financial Graduation!",
     message: "You've mastered student budgeting and are building your future!",
     achievement: "Smart Scholar",
     color: "from-blue-400 to-purple-500",
   },
   variable_income_budgeter_to_savings_builder: {
-    title: "📈 Stability Achieved!",
+    title: "Stability Achieved!",
     message: "Your income has stabilized and you're building savings!",
     achievement: "Stability Master",
     color: "from-purple-400 to-pink-500",
   },
   subscription_heavy_to_savings_builder: {
-    title: "🎯 Subscriptions Optimized!",
+    title: "Subscriptions Optimized!",
     message: "You've streamlined your subscriptions and are saving more!",
     achievement: "Subscription Master",
     color: "from-orange-400 to-red-500",
   },
   default: {
-    title: "🎉 Congratulations!",
+    title: "Congratulations!",
     message: "You've made great progress on your financial journey!",
     achievement: "Progress Champion",
     color: "from-blue-400 to-green-500",

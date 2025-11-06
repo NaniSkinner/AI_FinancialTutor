@@ -82,8 +82,8 @@ export function BulkActions({
 
           <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg p-3">
             <p className="text-sm text-yellow-800 dark:text-yellow-300">
-              ⚠️ This action will immediately send these recommendations to
-              users. Please ensure you&apos;ve reviewed all selected items.
+              This action will immediately send these recommendations to users.
+              Please ensure you&apos;ve reviewed all selected items.
             </p>
           </div>
 

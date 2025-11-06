@@ -15,6 +15,11 @@ import {
   recordRecommendationView,
 } from "@/lib/api";
 import type { Recommendation } from "@/lib/types";
+import {
+  EmergencyFundCalculator,
+  CreditUtilizationCalculator,
+  SubscriptionSavingsCalculator,
+} from "@/components/Calculators";
 
 interface RecommendationCardProps {
   recommendation: Recommendation;
@@ -225,15 +230,34 @@ You're already making great progress. Keep going!`,
             )}
 
             {recommendation.type === "calculator" && (
-              <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-8">
-                <div className="text-center py-8">
-                  <div className="text-gray-400 dark:text-gray-600 mb-4">
-                    <BookOpen className="h-12 w-12 mx-auto" />
-                  </div>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    Interactive calculator would be loaded here
-                  </p>
-                </div>
+              <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-6">
+                {/* Determine calculator type from URL */}
+                {recommendation.content_url?.includes("emergency-fund") && (
+                  <EmergencyFundCalculator
+                    initialMonthlyExpenses={0}
+                    initialCurrentSavings={0}
+                  />
+                )}
+                {recommendation.content_url?.includes("credit-utilization") && (
+                  <CreditUtilizationCalculator initialCards={[]} />
+                )}
+                {recommendation.content_url?.includes(
+                  "subscription-savings"
+                ) && <SubscriptionSavingsCalculator subscriptions={[]} />}
+                {!recommendation.content_url?.includes("emergency-fund") &&
+                  !recommendation.content_url?.includes("credit-utilization") &&
+                  !recommendation.content_url?.includes(
+                    "subscription-savings"
+                  ) && (
+                    <div className="text-center py-8">
+                      <div className="text-gray-400 dark:text-gray-600 mb-4">
+                        <BookOpen className="h-12 w-12 mx-auto" />
+                      </div>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        Calculator type not recognized
+                      </p>
+                    </div>
+                  )}
               </div>
             )}
 

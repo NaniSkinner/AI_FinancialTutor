@@ -8,7 +8,15 @@
  */
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Info, Shield, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Info,
+  Shield,
+  X,
+  TrendingUp,
+  CheckCircle,
+} from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -92,7 +100,7 @@ export function OnboardingModal({
       try {
         const success = await complete();
         if (success) {
-          showToast("Welcome to SpendSense! 🎉", "success");
+          showToast("Welcome to SpendSense!", "success");
           onComplete?.();
           onClose();
         } else {
@@ -125,7 +133,9 @@ export function OnboardingModal({
   // Step 1: Welcome
   const step1Content = (
     <div className="text-center space-y-6 py-4">
-      <div className="text-8xl mb-6">📊</div>
+      <div className="mb-6">
+        <TrendingUp className="h-24 w-24 mx-auto text-primary" />
+      </div>
       <div className="space-y-4 text-left max-w-md mx-auto">
         <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
           SpendSense helps you{" "}
@@ -172,7 +182,9 @@ export function OnboardingModal({
       {/* Step 1 */}
       <div className="flex gap-4 items-start">
         <div className="flex-shrink-0 w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-          <span className="text-2xl">1️⃣</span>
+          <span className="text-xl font-bold text-blue-700 dark:text-blue-200">
+            1
+          </span>
         </div>
         <div className="flex-1">
           <h3 className="font-bold text-xl mb-2 text-gray-900 dark:text-gray-100">
@@ -188,7 +200,9 @@ export function OnboardingModal({
       {/* Step 2 */}
       <div className="flex gap-4 items-start">
         <div className="flex-shrink-0 w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
-          <span className="text-2xl">2️⃣</span>
+          <span className="text-xl font-bold text-purple-700 dark:text-purple-200">
+            2
+          </span>
         </div>
         <div className="flex-1">
           <h3 className="font-bold text-xl mb-2 text-gray-900 dark:text-gray-100">
@@ -204,7 +218,9 @@ export function OnboardingModal({
       {/* Step 3 */}
       <div className="flex gap-4 items-start">
         <div className="flex-shrink-0 w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-          <span className="text-2xl">3️⃣</span>
+          <span className="text-xl font-bold text-green-700 dark:text-green-200">
+            3
+          </span>
         </div>
         <div className="flex-1">
           <h3 className="font-bold text-xl mb-2 text-gray-900 dark:text-gray-100">
@@ -341,7 +357,9 @@ export function OnboardingModal({
   // Step 4: Completion
   const step4Content = (
     <div className="text-center space-y-6 py-4">
-      <div className="text-8xl mb-6">✨</div>
+      <div className="mb-6">
+        <CheckCircle className="h-24 w-24 mx-auto text-green-500" />
+      </div>
       <p className="text-xl font-medium leading-relaxed text-gray-700 dark:text-gray-300">
         We've analyzed your financial data and found some interesting patterns!
       </p>
@@ -369,7 +387,7 @@ export function OnboardingModal({
 
   const steps = [
     {
-      title: "Welcome to SpendSense! 👋",
+      title: "Welcome to SpendSense!",
       description: "Your personal financial education companion",
       content: step1Content,
     },
@@ -384,7 +402,7 @@ export function OnboardingModal({
       content: step3Content,
     },
     {
-      title: "You're All Set! 🎉",
+      title: "You're All Set!",
       description: "Let's explore your dashboard",
       content: step4Content,
     },

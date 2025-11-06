@@ -1,4 +1,5 @@
 import React, { useState, memo } from "react";
+import { CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
 import { SignalStrengthIndicator } from "./SignalStrengthIndicator";
 import { CriteriaMetList } from "./CriteriaMetList";
@@ -36,13 +37,14 @@ export const TraceStep = memo(function TraceStep({
   };
 
   const getStatusIcon = () => {
+    const iconClass = "h-5 w-5";
     switch (status) {
       case "completed":
-        return <span className="text-green-600 text-lg">✓</span>;
+        return <CheckCircle className={`${iconClass} text-green-600`} />;
       case "warning":
-        return <span className="text-yellow-600 text-lg">⚠</span>;
+        return <AlertTriangle className={`${iconClass} text-yellow-600`} />;
       case "error":
-        return <span className="text-red-600 text-lg">✗</span>;
+        return <XCircle className={`${iconClass} text-red-600`} />;
     }
   };
 

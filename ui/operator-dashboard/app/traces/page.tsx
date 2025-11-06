@@ -39,7 +39,7 @@ export default function AdvancedTracesPage() {
                 : "text-gray-700 hover:bg-gray-100"
             }`}
           >
-            🔍 Search Traces
+            Search Traces
           </button>
           <button
             onClick={() => setViewMode("comparison")}
@@ -49,7 +49,7 @@ export default function AdvancedTracesPage() {
                 : "text-gray-700 hover:bg-gray-100"
             }`}
           >
-            ⚖️ Compare Traces
+            Compare Traces
           </button>
           <button
             onClick={() => setViewMode("history")}
@@ -59,7 +59,7 @@ export default function AdvancedTracesPage() {
                 : "text-gray-700 hover:bg-gray-100"
             }`}
           >
-            📊 User History
+            User History
           </button>
         </div>
 
@@ -69,7 +69,7 @@ export default function AdvancedTracesPage() {
             <div className="space-y-4">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <h3 className="text-sm font-medium text-blue-900 mb-1">
-                  🔍 Trace Search
+                  Trace Search
                 </h3>
                 <p className="text-sm text-blue-700">
                   Quickly lookup any trace by recommendation ID without
@@ -84,7 +84,7 @@ export default function AdvancedTracesPage() {
             <div className="space-y-4">
               <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                 <h3 className="text-sm font-medium text-purple-900 mb-1">
-                  ⚖️ Trace Comparison
+                  Trace Comparison
                 </h3>
                 <p className="text-sm text-purple-700">
                   Compare two traces side-by-side to understand why different
@@ -99,7 +99,7 @@ export default function AdvancedTracesPage() {
             <div className="space-y-4">
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <h3 className="text-sm font-medium text-green-900 mb-1">
-                  📊 User Trace History
+                  User Trace History
                 </h3>
                 <p className="text-sm text-green-700">
                   View all traces for a user over time and track persona
@@ -114,7 +114,7 @@ export default function AdvancedTracesPage() {
         {/* Quick Links */}
         <div className="bg-gray-100 rounded-lg p-4">
           <h4 className="text-sm font-medium text-gray-900 mb-2">
-            💡 Quick Test IDs
+            Quick Test IDs
           </h4>
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="bg-white p-2 rounded border border-gray-200">

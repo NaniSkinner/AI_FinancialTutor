@@ -66,7 +66,7 @@ export function SavingsChallenge({ userId }: SavingsChallengeProps) {
       // await saveChallengeCompletion(userId, activeChallenge.id);
 
       showToast(
-        `🎉 Challenge Complete! You saved ~$${activeChallenge.potentialSavings}!`,
+        `Challenge Complete! You saved ~$${activeChallenge.potentialSavings}!`,
         "success"
       );
 
@@ -100,13 +100,13 @@ export function SavingsChallenge({ userId }: SavingsChallengeProps) {
         {activeChallenge ? (
           /* Active Challenge View */
           <div className="space-y-4">
-            <Alert className="bg-blue-50 border-blue-200">
-              <Trophy className="h-4 w-4 text-blue-600" />
+            <Alert className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+              <Trophy className="h-4 w-4 text-blue-600 dark:text-blue-400" />
               <div className="ml-2">
-                <div className="font-semibold text-blue-900">
+                <div className="font-semibold text-blue-900 dark:text-blue-100">
                   Active Challenge
                 </div>
-                <AlertDescription className="text-blue-800">
+                <AlertDescription className="text-blue-800 dark:text-blue-300">
                   {activeChallenge.title} - Day {challengeProgress} of{" "}
                   {activeChallenge.durationDays}
                 </AlertDescription>
@@ -130,8 +130,8 @@ export function SavingsChallenge({ userId }: SavingsChallengeProps) {
               </p>
             </div>
 
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-700 mb-2">
+            <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+              <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
                 {activeChallenge.description}
               </p>
               <div className="flex items-center gap-4 text-xs text-muted-foreground">

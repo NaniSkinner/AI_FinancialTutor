@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { Clock } from "lucide-react";
 import { Badge } from "@/components/Common/Badge";
 import { Button } from "@/components/Common/Button";
 import { useToast } from "@/components/Common/Toast";
@@ -231,8 +232,9 @@ export function RecommendationCard({
 
             {/* Read Time */}
             {recommendation.read_time_minutes && (
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                ⏱ {recommendation.read_time_minutes} min
+              <span className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                <Clock className="h-3.5 w-3.5" />
+                {recommendation.read_time_minutes} min
               </span>
             )}
           </div>
@@ -372,7 +374,7 @@ export function RecommendationCard({
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-sm font-medium text-yellow-900 dark:text-yellow-200">
-                  ⚠️ Action can be undone
+                  Action can be undone
                 </div>
                 <div className="text-xs text-yellow-700 dark:text-yellow-400 mt-1">
                   Time remaining: {undoCountdown}s

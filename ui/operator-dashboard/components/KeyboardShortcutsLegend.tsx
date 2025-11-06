@@ -60,7 +60,7 @@ export function KeyboardShortcutsLegend() {
         className="fixed bottom-4 right-4 bg-white shadow-lg hover:shadow-xl transition-shadow z-50"
         aria-label="Show keyboard shortcuts"
       >
-        ⌨️ Shortcuts
+        Shortcuts
       </Button>
 
       <Modal

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from "react";
+import { CheckCircle, XCircle, AlertTriangle, Info } from "lucide-react";
 
 // Toast Types
 type ToastType = "success" | "error" | "info" | "warning";
@@ -77,16 +78,17 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
   };
 
   const getIcon = (type: ToastType) => {
+    const iconClass = "h-5 w-5";
     switch (type) {
       case "success":
-        return "✓";
+        return <CheckCircle className={iconClass} />;
       case "error":
-        return "✗";
+        return <XCircle className={iconClass} />;
       case "warning":
-        return "⚠";
+        return <AlertTriangle className={iconClass} />;
       case "info":
       default:
-        return "ℹ";
+        return <Info className={iconClass} />;
     }
   };
 

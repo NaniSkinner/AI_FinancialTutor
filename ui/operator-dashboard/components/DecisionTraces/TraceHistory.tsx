@@ -137,7 +137,7 @@ export function TraceHistory({ userId }: Props) {
       {personaTransitions.length > 0 && (
         <div className="bg-blue-50 rounded-lg border border-blue-200 p-4">
           <h4 className="text-sm font-medium text-gray-900 mb-2">
-            🎯 Persona Transitions
+            Persona Transitions
           </h4>
           <div className="space-y-2">
             {personaTransitions.map((transition, i) => (
@@ -186,7 +186,7 @@ export function TraceHistory({ userId }: Props) {
                     </span>
                     {!trace.guardrails_passed && (
                       <span className="text-xs px-2 py-0.5 bg-orange-100 text-orange-800 rounded">
-                        ⚠️ Guardrail Warning
+                        Guardrail Warning
                       </span>
                     )}
                   </div>

@@ -192,7 +192,7 @@ export function useGamification({
         if (checkLevelUp(previousPoints, newData.totalPoints)) {
           trackLevelUp(userId, newData.level, newData.totalPoints);
           showToast(
-            `🎉 Level Up! You've reached Level ${newData.level}!`,
+            `Level Up! You've reached Level ${newData.level}!`,
             "success"
           );
         }
@@ -210,10 +210,7 @@ export function useGamification({
               achievement.title,
               achievement.points || 0
             );
-            showToast(
-              `✨ Achievement Unlocked: ${achievement.title}`,
-              "success"
-            );
+            showToast(`Achievement Unlocked: ${achievement.title}`, "success");
           });
         }
 

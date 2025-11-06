@@ -117,15 +117,15 @@ export function ProgressTracker({
 
       <CardContent className="space-y-6">
         {/* Streak Counter */}
-        <div className="text-center p-6 bg-gradient-to-br from-orange-50 to-red-50 rounded-lg border-2 border-orange-200">
-          <div className="text-6xl font-bold mb-2 text-orange-600">
+        <div className="text-center p-6 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/30 dark:to-red-900/30 rounded-lg border-2 border-orange-200 dark:border-orange-800">
+          <div className="text-6xl font-bold mb-2 text-orange-600 dark:text-orange-400">
             {streak}
           </div>
-          <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
-            <Flame className="h-4 w-4 text-orange-500" />
+          <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center justify-center gap-1">
+            <Flame className="h-4 w-4 text-orange-500 dark:text-orange-400" />
             day streak
           </div>
-          <p className="text-xs text-muted-foreground mt-2">
+          <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
             Keep learning to maintain your streak!
           </p>
         </div>
@@ -146,13 +146,15 @@ export function ProgressTracker({
                   key={milestone.id}
                   className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
                     milestone.achieved
-                      ? "bg-green-50 border-green-200"
-                      : "bg-gray-50 border-gray-200"
+                      ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                      : "bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700"
                   }`}
                 >
                   <div
                     className={`flex-shrink-0 ${
-                      milestone.achieved ? "text-green-600" : "text-gray-400"
+                      milestone.achieved
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-gray-400 dark:text-gray-600"
                     }`}
                   >
                     {milestone.achieved ? (
@@ -164,13 +166,15 @@ export function ProgressTracker({
                   <div className="flex-1 min-w-0">
                     <p
                       className={`text-sm font-medium ${
-                        milestone.achieved ? "" : "text-muted-foreground"
+                        milestone.achieved
+                          ? "text-gray-900 dark:text-gray-100"
+                          : "text-gray-600 dark:text-gray-400"
                       }`}
                     >
                       {milestone.title}
                     </p>
                     {milestone.description && (
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
                         {milestone.description}
                       </p>
                     )}

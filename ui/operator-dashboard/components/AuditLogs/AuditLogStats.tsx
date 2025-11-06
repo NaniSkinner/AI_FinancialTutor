@@ -46,10 +46,10 @@ export function AuditLogStats({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <StatCard label="Total Actions" value={totalCount} icon="📊" />
-      <StatCard label="Today" value={todayCount} icon="📅" />
-      <StatCard label="Approvals" value={approvalsCount} icon="✅" />
-      <StatCard label="Rejections" value={rejectionsCount} icon="❌" />
+      <StatCard label="Total Actions" value={totalCount} icon="chart" />
+      <StatCard label="Today" value={todayCount} icon="calendar" />
+      <StatCard label="Approvals" value={approvalsCount} icon="check" />
+      <StatCard label="Rejections" value={rejectionsCount} icon="x" />
     </div>
   );
 }
