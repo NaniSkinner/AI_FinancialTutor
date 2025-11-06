@@ -16,11 +16,24 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from typing import Optional, List
 import sqlite3
 import json
+import asyncio
 
 from database import get_db
 from operator_actions import OperatorActions
 from auth import verify_token, require_permission
 import schemas
+
+# Import real-time broadcast functions
+try:
+    from realtime import (
+        broadcast_recommendation_approved,
+        broadcast_recommendation_rejected,
+        broadcast_recommendation_modified,
+        broadcast_recommendation_flagged
+    )
+    REALTIME_AVAILABLE = True
+except ImportError:
+    REALTIME_AVAILABLE = False
 
 
 # ========================================================================
@@ -146,7 +159,7 @@ def get_recommendations(
 # ========================================================================
 
 @router.post("/recommendations/{recommendation_id}/approve")
-def approve_recommendation(
+async def approve_recommendation(
     recommendation_id: str,
     request: schemas.ApproveRequest,
     operator: dict = Depends(verify_token),
@@ -176,6 +189,13 @@ def approve_recommendation(
             recommendation_id=recommendation_id,
             notes=request.notes
         )
+        
+        # Broadcast real-time update
+        if REALTIME_AVAILABLE:
+            asyncio.create_task(
+                broadcast_recommendation_approved(recommendation_id, operator_id)
+            )
+        
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -188,7 +208,7 @@ def approve_recommendation(
 # ========================================================================
 
 @router.post("/recommendations/{recommendation_id}/reject")
-def reject_recommendation(
+async def reject_recommendation(
     recommendation_id: str,
     request: schemas.RejectRequest,
     operator: dict = Depends(verify_token),
@@ -217,6 +237,13 @@ def reject_recommendation(
             recommendation_id=recommendation_id,
             reason=request.reason
         )
+        
+        # Broadcast real-time update
+        if REALTIME_AVAILABLE:
+            asyncio.create_task(
+                broadcast_recommendation_rejected(recommendation_id, operator_id, request.reason)
+            )
+        
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -229,7 +256,7 @@ def reject_recommendation(
 # ========================================================================
 
 @router.patch("/recommendations/{recommendation_id}")
-def modify_recommendation(
+async def modify_recommendation(
     recommendation_id: str,
     request: schemas.ModifyRequest,
     operator: dict = Depends(require_permission("modify")),
@@ -268,6 +295,13 @@ def modify_recommendation(
             recommendation_id=recommendation_id,
             modifications=modifications
         )
+        
+        # Broadcast real-time update
+        if REALTIME_AVAILABLE:
+            asyncio.create_task(
+                broadcast_recommendation_modified(recommendation_id, operator_id)
+            )
+        
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -280,7 +314,7 @@ def modify_recommendation(
 # ========================================================================
 
 @router.post("/recommendations/{recommendation_id}/flag")
-def flag_recommendation(
+async def flag_recommendation(
     recommendation_id: str,
     request: schemas.FlagRequest,
     operator: dict = Depends(require_permission("flag")),
@@ -316,6 +350,13 @@ def flag_recommendation(
             recommendation_id=recommendation_id,
             flag_reason=request.reason
         )
+        
+        # Broadcast real-time update
+        if REALTIME_AVAILABLE:
+            asyncio.create_task(
+                broadcast_recommendation_flagged(recommendation_id, operator_id)
+            )
+        
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

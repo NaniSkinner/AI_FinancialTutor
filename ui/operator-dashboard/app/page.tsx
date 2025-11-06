@@ -7,14 +7,19 @@ import { AlertPanel } from "@/components/AlertPanel/AlertPanel";
 import { StatsOverview } from "@/components/StatsOverview";
 import { UserExplorer } from "@/components/UserExplorer";
 import { KeyboardShortcutsLegend } from "@/components/KeyboardShortcutsLegend";
+import { ChatWidget } from "@/components/ChatWidget";
 import { useAuth } from "@/lib/auth";
 import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
+import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
 
 type TabType = "review" | "explorer";
 
 export default function OperatorDashboard() {
   // Performance monitoring
   usePerformanceMonitoring("OperatorDashboard");
+
+  // Real-time updates
+  useRealtimeUpdates();
 
   const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
   const [activeTab, setActiveTab] = useState<TabType>("review");
@@ -54,6 +59,12 @@ export default function OperatorDashboard() {
                   Mock Data
                 </span>
               )}
+              {!useMockData && (
+                <span className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                  <span className="w-1.5 h-1.5 bg-green-600 rounded-full animate-pulse" />
+                  Live
+                </span>
+              )}
             </div>
 
             <div className="flex items-center gap-4">
@@ -64,6 +75,13 @@ export default function OperatorDashboard() {
               >
                 <span>📋</span>
                 <span>Audit Logs</span>
+              </a>
+              <a
+                href="/analytics"
+                className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors flex items-center gap-1"
+              >
+                <span>📊</span>
+                <span>Analytics</span>
               </a>
 
               {/* Quick Stats */}
@@ -195,6 +213,9 @@ export default function OperatorDashboard() {
 
       {/* Keyboard Shortcuts Legend */}
       <KeyboardShortcutsLegend />
+
+      {/* Chat Widget - Operator Mode */}
+      <ChatWidget userId="demo_operator" persona="general" mode="operator" />
     </div>
   );
 }

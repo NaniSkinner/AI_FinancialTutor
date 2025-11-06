@@ -78,6 +78,30 @@ except ImportError as e:
     NOTES_ROUTER_AVAILABLE = False
     logger.warning(f"Notes router not available: {e}")
 
+# Try to import realtime router
+try:
+    from realtime import router as realtime_router
+    REALTIME_ROUTER_AVAILABLE = True
+except ImportError as e:
+    REALTIME_ROUTER_AVAILABLE = False
+    logger.warning(f"Realtime router not available: {e}")
+
+# Try to import tags router
+try:
+    from tags import router as tags_router
+    TAGS_ROUTER_AVAILABLE = True
+except ImportError as e:
+    TAGS_ROUTER_AVAILABLE = False
+    logger.warning(f"Tags router not available: {e}")
+
+# Try to import analytics router
+try:
+    from analytics import router as analytics_router
+    ANALYTICS_ROUTER_AVAILABLE = True
+except ImportError as e:
+    ANALYTICS_ROUTER_AVAILABLE = False
+    logger.warning(f"Analytics router not available: {e}")
+
 
 # ========================================================================
 # FastAPI Application
@@ -289,6 +313,41 @@ if NOTES_ROUTER_AVAILABLE:
     print("✓ Notes router registered successfully")
 else:
     print("⚠️  Notes router not available - create notes.py")
+
+# Register realtime router
+if REALTIME_ROUTER_AVAILABLE:
+    app.include_router(
+        realtime_router,
+        prefix="/api",
+        tags=["Realtime"]
+    )
+    print("✓ Realtime router registered successfully")
+
+# ========================================================================
+# Register tags router
+# ========================================================================
+if TAGS_ROUTER_AVAILABLE:
+    app.include_router(
+        tags_router,
+        prefix="/api/operator",
+        tags=["Tags"]
+    )
+    print("✓ Tags router registered successfully")
+else:
+    print("⚠️  Tags router not available - create tags.py")
+
+# ========================================================================
+# Register analytics router
+# ========================================================================
+if ANALYTICS_ROUTER_AVAILABLE:
+    app.include_router(
+        analytics_router,
+        prefix="/api/operator",
+        tags=["Analytics"]
+    )
+    print("✓ Analytics router registered successfully")
+else:
+    print("⚠️  Analytics router not available - create analytics.py")
 
 
 # ========================================================================

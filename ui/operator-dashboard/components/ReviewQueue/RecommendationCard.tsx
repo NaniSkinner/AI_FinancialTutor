@@ -6,6 +6,7 @@ import { Button } from "@/components/Common/Button";
 import { useToast } from "@/components/Common/Toast";
 import { DecisionTraces } from "@/components/DecisionTraces/DecisionTraces";
 import { NotesPanel } from "./NotesPanel";
+import { TagsPanel } from "./TagsPanel";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import {
   approveRecommendation,
@@ -350,6 +351,11 @@ export function RecommendationCard({
               <span className="text-sm text-gray-600">Eligibility</span>
             </div>
           </div>
+        </div>
+
+        {/* Tags Panel */}
+        <div className="pt-2">
+          <TagsPanel recommendationId={recommendation.id} />
         </div>
 
         {/* Undo Action Banner */}
