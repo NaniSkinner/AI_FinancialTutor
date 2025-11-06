@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/Common/Badge";
 import { Button } from "@/components/Common/Button";
 import { useToast } from "@/components/Common/Toast";
@@ -11,6 +11,7 @@ import {
   rejectRecommendation,
   modifyRecommendation,
   flagRecommendation,
+  undoAction,
 } from "@/lib/api";
 import {
   getPriorityColor,
@@ -43,6 +44,8 @@ export function RecommendationCard({
     recommendation.rationale
   );
   const [actionLoading, setActionLoading] = useState(false);
+  const [showUndoButton, setShowUndoButton] = useState(false);
+  const [undoCountdown, setUndoCountdown] = useState<number | null>(null);
   const { showToast } = useToast();
 
   // ============================================================================
@@ -113,6 +116,62 @@ export function RecommendationCard({
       setActionLoading(false);
     }
   };
+
+  const handleUndo = async () => {
+    if (!confirm("Undo this action? This will restore the previous status."))
+      return;
+
+    setActionLoading(true);
+    try {
+      await undoAction(recommendation.id);
+      showToast("Action undone successfully", "success");
+      onAction(); // Refresh the list
+    } catch (error: any) {
+      console.error("Failed to undo:", error);
+      showToast(error.message || "Failed to undo action", "error");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // ============================================================================
+  // UNDO WINDOW COUNTDOWN
+  // ============================================================================
+
+  useEffect(() => {
+    // Check if undo is available
+    if (
+      recommendation.status_changed_at &&
+      recommendation.undo_window_expires_at
+    ) {
+      const expiresAt = new Date(recommendation.undo_window_expires_at);
+      const now = new Date();
+
+      if (now < expiresAt) {
+        setShowUndoButton(true);
+
+        // Update countdown every second
+        const interval = setInterval(() => {
+          const remaining = Math.floor(
+            (expiresAt.getTime() - Date.now()) / 1000
+          );
+          if (remaining <= 0) {
+            setShowUndoButton(false);
+            setUndoCountdown(null);
+            clearInterval(interval);
+          } else {
+            setUndoCountdown(remaining);
+          }
+        }, 1000);
+
+        return () => clearInterval(interval);
+      }
+    }
+  }, [
+    recommendation.status_changed_at,
+    recommendation.undo_window_expires_at,
+    recommendation.id,
+  ]);
 
   // ============================================================================
   // KEYBOARD SHORTCUTS
@@ -280,6 +339,32 @@ export function RecommendationCard({
             </div>
           </div>
         </div>
+
+        {/* Undo Action Banner */}
+        {showUndoButton && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm font-medium text-yellow-900">
+                  ⚠️ Action can be undone
+                </div>
+                <div className="text-xs text-yellow-700 mt-1">
+                  Time remaining: {undoCountdown}s
+                </div>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleUndo}
+                disabled={actionLoading}
+                className="bg-white hover:bg-yellow-100 border-yellow-300 text-yellow-900"
+                aria-label={`Undo last action on recommendation ${recommendation.title}`}
+              >
+                ⟲ Undo
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Decision Traces (Expandable) */}
         {showTraces && (

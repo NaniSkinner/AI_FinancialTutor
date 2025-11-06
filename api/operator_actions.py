@@ -15,7 +15,7 @@ Each action includes:
 3. Transaction management
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 import json
 import sqlite3
@@ -91,17 +91,22 @@ class OperatorActions:
         if not guardrails_passed:
             raise ValueError("Cannot approve recommendation that failed guardrails")
         
-        # Update recommendation
+        # Update recommendation with undo support
         now = datetime.now().isoformat()
+        undo_expires = (datetime.now() + timedelta(minutes=5)).isoformat()
+        
         cursor.execute("""
             UPDATE recommendations
             SET status = 'approved',
+                previous_status = ?,
                 approved_by = ?,
                 approved_at = ?,
                 operator_notes = ?,
+                status_changed_at = ?,
+                undo_window_expires_at = ?,
                 updated_at = ?
             WHERE recommendation_id = ?
-        """, (operator_id, now, notes, now, recommendation_id))
+        """, (status, operator_id, now, notes, now, undo_expires, now, recommendation_id))
         
         # Log action
         self._log_operator_action(
@@ -111,8 +116,11 @@ class OperatorActions:
             metadata={'notes': notes}
         )
         
-        # Queue for delivery (placeholder for future notification system)
-        self._queue_for_delivery(recommendation_id)
+        # NOTE: Don't queue for delivery immediately - keep as 'approved' during undo window
+        # The delivery system should queue items where:
+        # - status = 'approved' AND undo_window_expires_at < now
+        # This allows the 5-minute undo window to function properly
+        # self._queue_for_delivery(recommendation_id)  # Disabled to support undo
         
         return {
             'status': 'approved',
@@ -157,27 +165,35 @@ class OperatorActions:
         
         cursor = self.db.cursor()
         
-        # Verify recommendation exists
+        # Verify recommendation exists and get current status
         cursor.execute("""
-            SELECT recommendation_id 
+            SELECT status
             FROM recommendations 
             WHERE recommendation_id = ?
         """, (recommendation_id,))
         
-        if not cursor.fetchone():
+        row = cursor.fetchone()
+        if not row:
             raise ValueError(f"Recommendation {recommendation_id} not found")
         
-        # Update recommendation
+        status = row['status']
+        
+        # Update recommendation with undo support
         now = datetime.now().isoformat()
+        undo_expires = (datetime.now() + timedelta(minutes=5)).isoformat()
+        
         cursor.execute("""
             UPDATE recommendations
             SET status = 'rejected',
+                previous_status = ?,
                 rejected_by = ?,
                 rejected_at = ?,
                 operator_notes = ?,
+                status_changed_at = ?,
+                undo_window_expires_at = ?,
                 updated_at = ?
             WHERE recommendation_id = ?
-        """, (operator_id, now, reason, now, recommendation_id))
+        """, (status, operator_id, now, reason, now, undo_expires, now, recommendation_id))
         
         # Log action
         self._log_operator_action(
@@ -329,18 +345,22 @@ class OperatorActions:
         
         cursor = self.db.cursor()
         
-        # Verify recommendation exists
+        # Verify recommendation exists and get current status
         cursor.execute("""
-            SELECT recommendation_id 
+            SELECT status
             FROM recommendations 
             WHERE recommendation_id = ?
         """, (recommendation_id,))
         
-        if not cursor.fetchone():
+        row = cursor.fetchone()
+        if not row:
             raise ValueError(f"Recommendation {recommendation_id} not found")
+        
+        status = row['status']
         
         # Generate flag ID
         now = datetime.now().isoformat()
+        undo_expires = (datetime.now() + timedelta(minutes=5)).isoformat()
         timestamp = int(datetime.now().timestamp())
         flag_id = f"flag_{recommendation_id}_{timestamp}"
         
@@ -351,13 +371,16 @@ class OperatorActions:
             VALUES (?, ?, ?, ?, ?)
         """, (flag_id, recommendation_id, operator_id, flag_reason, now))
         
-        # Update recommendation status
+        # Update recommendation status with undo support
         cursor.execute("""
             UPDATE recommendations
             SET status = 'flagged',
+                previous_status = ?,
+                status_changed_at = ?,
+                undo_window_expires_at = ?,
                 updated_at = ?
             WHERE recommendation_id = ?
-        """, (now, recommendation_id))
+        """, (status, now, undo_expires, now, recommendation_id))
         
         # Log action
         self._log_operator_action(
@@ -374,6 +397,109 @@ class OperatorActions:
             'flagged_by': operator_id,
             'flagged_at': now,
             'reason': flag_reason
+        }
+    
+    # ========================================================================
+    # UNDO ACTION
+    # ========================================================================
+    
+    def undo_action(
+        self, 
+        operator_id: str, 
+        recommendation_id: str
+    ) -> Dict[str, Any]:
+        """
+        Undo the last action on a recommendation within 5-minute window.
+        
+        Allows operators to reverse accidental actions:
+        - Approve → Previous status
+        - Reject → Previous status
+        - Flag → Previous status
+        
+        Limitations:
+        - Cannot undo if recommendation already delivered
+        - Cannot undo after 5-minute window expires
+        - Only reverses status change, not modifications
+        
+        Process:
+        1. Verify recommendation exists
+        2. Check undo window hasn't expired
+        3. Check recommendation not already delivered
+        4. Restore previous status
+        5. Clear undo metadata
+        6. Log undo action
+        
+        Args:
+            operator_id: ID of operator performing undo
+            recommendation_id: ID of recommendation to undo
+            
+        Returns:
+            Dict with status, recommendation_id, and restored status
+            
+        Raises:
+            ValueError: If undo window expired, already delivered, or invalid state
+        """
+        cursor = self.db.cursor()
+        
+        # Get current state
+        cursor.execute("""
+            SELECT status, previous_status, undo_window_expires_at
+            FROM recommendations
+            WHERE recommendation_id = ?
+        """, (recommendation_id,))
+        
+        row = cursor.fetchone()
+        if not row:
+            raise ValueError(f"Recommendation {recommendation_id} not found")
+        
+        current_status = row['status']
+        previous_status = row['previous_status']
+        expires_at = row['undo_window_expires_at']
+        
+        # Check if undo window expired
+        if not expires_at:
+            raise ValueError("No undo available for this recommendation")
+        
+        if datetime.fromisoformat(expires_at) < datetime.now():
+            raise ValueError("Undo window expired (5 minutes have passed)")
+        
+        # Check if already delivered
+        if current_status in ['delivered', 'queued_for_delivery']:
+            raise ValueError("Cannot undo - recommendation already delivered or queued for delivery")
+        
+        if not previous_status:
+            raise ValueError("No previous status to restore")
+        
+        # Restore previous status
+        now = datetime.now().isoformat()
+        cursor.execute("""
+            UPDATE recommendations
+            SET status = ?,
+                previous_status = NULL,
+                status_changed_at = NULL,
+                undo_window_expires_at = NULL,
+                updated_at = ?
+            WHERE recommendation_id = ?
+        """, (previous_status, now, recommendation_id))
+        
+        # Log undo action
+        self._log_operator_action(
+            operator_id=operator_id,
+            action='undo',
+            recommendation_id=recommendation_id,
+            metadata={
+                'reverted_from': current_status,
+                'restored_to': previous_status
+            }
+        )
+        
+        return {
+            'status': 'undone',
+            'recommendation_id': recommendation_id,
+            'restored_status': previous_status,
+            'reverted_from': current_status,
+            'undone_by': operator_id,
+            'undone_at': now
         }
     
     # ========================================================================

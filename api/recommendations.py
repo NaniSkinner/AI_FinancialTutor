@@ -324,6 +324,47 @@ def flag_recommendation(
 
 
 # ========================================================================
+# UNDO ACTION
+# ========================================================================
+
+@router.post("/recommendations/{recommendation_id}/undo")
+def undo_recommendation(
+    recommendation_id: str,
+    operator: dict = Depends(verify_token),
+    db: sqlite3.Connection = Depends(get_db)
+):
+    """
+    Undo the last action on a recommendation within 5-minute window.
+    
+    Allows operators to reverse accidental actions:
+    - Approve → Restored to previous status
+    - Reject → Restored to previous status
+    - Flag → Restored to previous status
+    
+    Requirements:
+    - Must be within 5 minutes of action
+    - Recommendation must not be delivered
+    - Only reverses status change (not modifications)
+    
+    Returns:
+        Undo confirmation with restored status
+    """
+    operator_id = operator["operator_id"]
+    
+    try:
+        actions = OperatorActions(db)
+        result = actions.undo_action(
+            operator_id=operator_id,
+            recommendation_id=recommendation_id
+        )
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error undoing action: {str(e)}")
+
+
+# ========================================================================
 # BULK APPROVE
 # ========================================================================
 
