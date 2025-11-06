@@ -492,7 +492,7 @@ export function PersonaTimeline({ userId }: Props) {
 
 Create `/hooks/useUserSignals.ts`:
 
-```typescript
+```tsx
 import useSWR from "swr";
 import { fetchUserSignals } from "@/lib/api";
 import type { UserSignals } from "@/lib/types";
@@ -519,7 +519,7 @@ export function useUserSignals(userId: string | null) {
 
 Create `/hooks/usePersonaHistory.ts`:
 
-```typescript
+```tsx
 import useSWR from "swr";
 
 interface PersonaHistoryEntry {
@@ -645,7 +645,7 @@ export function usePersonaHistory(userId: string) {
 
 Add to `/lib/utils.ts`:
 
-```typescript
+```tsx
 // Format persona name for display
 export function formatPersonaName(persona: string): string {
   return persona.replace(/_/g, " ").toUpperCase();

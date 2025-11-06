@@ -330,7 +330,7 @@ export function TraceTimeline({ events }: Props) {
 
 Create `/hooks/useDecisionTrace.ts`:
 
-```typescript
+```tsx
 import useSWR from "swr";
 import { fetchDecisionTrace } from "@/lib/api";
 import type { DecisionTrace } from "@/lib/types";

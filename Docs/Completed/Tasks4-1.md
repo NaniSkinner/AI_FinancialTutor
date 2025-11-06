@@ -321,7 +321,7 @@ next-env.d.ts
 
 ### lib/types.ts
 
-```typescript
+```tsx
 // lib/types.ts
 
 // ============================================================================
@@ -704,7 +704,7 @@ export interface RecommendationStore {
 
 ### lib/utils.ts
 
-```typescript
+```tsx
 // lib/utils.ts
 
 import { type ClassValue, clsx } from "clsx";
@@ -1017,7 +1017,7 @@ export function groupBy<T>(array: T[], key: keyof T): Record<string, T[]> {
 
 ### lib/error-handler.ts
 
-```typescript
+```tsx
 // lib/error-handler.ts
 
 export class ApiError extends Error {
@@ -1222,7 +1222,7 @@ export function logError(error: any, context?: string) {
 
 ### app/layout.tsx
 
-```typescript
+```tsx
 // app/layout.tsx
 
 import type { Metadata } from "next";
@@ -1252,7 +1252,7 @@ export default function RootLayout({
 
 ### app/page.tsx
 
-```typescript
+```tsx
 // app/page.tsx
 
 export default function DashboardPage() {

@@ -667,7 +667,7 @@ export function StatsOverview() {
 
 Create `/hooks/useOperatorStats.ts`:
 
-```typescript
+```tsx
 import useSWR from "swr";
 import { fetchOperatorStats } from "@/lib/api";
 import type { OperatorStats } from "@/lib/types";
@@ -697,7 +697,7 @@ export function useOperatorStats() {
 
 Create `/lib/design-tokens.ts`:
 
-```typescript
+```tsx
 // Color Palette
 export const colors = {
   // Priority colors

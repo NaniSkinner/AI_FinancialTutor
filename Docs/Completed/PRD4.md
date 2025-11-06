@@ -1803,7 +1803,7 @@ export function AlertPanel() {
 
 ### 9.2 Alert Types
 
-```typescript
+```tsx
 // Alert categories
 type AlertType =
   | "high_rejection_rate" // >20% rejection rate today
@@ -1943,7 +1943,7 @@ NEXT_PUBLIC_OPERATOR_ID=op_001
 
 ### 12.3 API Client Setup
 
-```typescript
+```tsx
 // /lib/api.ts
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -1980,7 +1980,7 @@ export async function approveRecommendation(
 
 ### 13.1 Component Tests
 
-```typescript
+```tsx
 // /tests/ReviewQueue.test.tsx
 
 import { render, screen, fireEvent } from "@testing-library/react";
@@ -2033,7 +2033,7 @@ describe("ReviewQueue", () => {
 
 ### 15.1 Authentication
 
-```typescript
+```tsx
 // Simple JWT-based auth for prototype
 // In production, use proper OAuth/SSO
 

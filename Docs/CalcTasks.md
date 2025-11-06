@@ -836,7 +836,7 @@ ui/operator-dashboard/
 
 **Data Integration Points:**
 
-```typescript
+```tsx
 // From user signals
 userData.signals.monthlyExpenses; // → Emergency Fund
 userData.signals.savings.balance; // → Emergency Fund

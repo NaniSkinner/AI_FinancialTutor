@@ -66,7 +66,7 @@ export function CreditUtilizationCalculator({
           {cards.map((card, index) => (
             <div
               key={index}
-              className="flex gap-4 items-center p-4 border border-gray-200 rounded-lg"
+              className="flex gap-4 items-center p-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg"
             >
               <div className="flex-1 space-y-2">
                 <Label className="text-xs">Balance</Label>
@@ -94,7 +94,7 @@ export function CreditUtilizationCalculator({
               </div>
               <div className="space-y-2">
                 <Label className="text-xs">Util.</Label>
-                <div className="text-sm font-medium">
+                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {card.limit > 0
                     ? calculateUtilization(card.balance, card.limit).toFixed(0)
                     : 0}
@@ -121,13 +121,15 @@ export function CreditUtilizationCalculator({
         </div>
 
         {/* Results */}
-        <div className="space-y-4 p-6 bg-linear-to-br from-blue-50 to-purple-50 rounded-lg border-2 border-gray-200">
+        <div className="space-y-4 p-6 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border-2 border-blue-200 dark:border-blue-800">
           <div className="text-center">
-            <p className="text-sm text-gray-600 mb-2">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
               Overall Credit Utilization
             </p>
-            <p className="text-5xl font-bold">{utilization.toFixed(1)}%</p>
-            <p className="text-sm text-gray-600 mt-2">
+            <p className="text-5xl font-bold text-gray-900 dark:text-gray-100">
+              {utilization.toFixed(1)}%
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
               ${formatCurrency(totalBalance)} of ${formatCurrency(totalLimit)}
             </p>
           </div>
@@ -143,7 +145,7 @@ export function CreditUtilizationCalculator({
                     : "[&>div]:bg-green-500"
               }`}
             />
-            <div className="flex justify-between text-xs text-gray-600">
+            <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400">
               <span>0%</span>
               <span className="font-medium">30% (Ideal)</span>
               <span>100%</span>
@@ -151,7 +153,7 @@ export function CreditUtilizationCalculator({
           </div>
 
           {/* Recommendations */}
-          <div className="pt-4 border-t border-gray-300 space-y-2">
+          <div className="pt-4 border-t border-blue-200 dark:border-blue-700 space-y-2">
             {utilization > 50 && (
               <Alert variant="destructive">
                 <div className="flex items-start gap-2">
@@ -164,10 +166,10 @@ export function CreditUtilizationCalculator({
               </Alert>
             )}
             {utilization > 30 && utilization <= 50 && (
-              <Alert className="bg-yellow-50 border-yellow-200">
+              <Alert className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
                 <div className="flex items-start gap-2">
-                  <AlertCircle className="h-4 w-4 text-yellow-600 mt-0.5" />
-                  <AlertDescription className="text-sm text-yellow-800">
+                  <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mt-0.5" />
+                  <AlertDescription className="text-sm text-yellow-800 dark:text-yellow-300">
                     Utilization between 30-50% may affect your credit. Aim to
                     get below 30%.
                   </AlertDescription>
@@ -175,10 +177,10 @@ export function CreditUtilizationCalculator({
               </Alert>
             )}
             {utilization <= 30 && utilization > 0 && (
-              <Alert className="bg-green-50 border-green-200">
+              <Alert className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
-                  <AlertDescription className="text-sm text-green-800">
+                  <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+                  <AlertDescription className="text-sm text-green-800 dark:text-green-300">
                     Great job! Keeping utilization below 30% is ideal for credit
                     health.
                   </AlertDescription>

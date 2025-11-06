@@ -688,7 +688,7 @@ export function BulkActions({
 
 Create `/hooks/useRecommendations.ts`:
 
-```typescript
+```tsx
 import useSWR from "swr";
 import { fetchRecommendations } from "@/lib/api";
 import type { Recommendation } from "@/lib/types";
@@ -724,7 +724,7 @@ export function useRecommendations(filters: Filters) {
 
 Create `/hooks/useKeyboardShortcuts.ts`:
 
-```typescript
+```tsx
 import { useEffect } from "react";
 
 interface KeyboardShortcuts {

@@ -1033,7 +1033,7 @@ ui/operator-dashboard/
 
 **Milestone Categories:**
 
-```typescript
+```tsx
 Personas with unique milestones:
 - high_utilization (4 milestones, 10-100 pts)
 - student (4 milestones, 10-75 pts)
@@ -1044,7 +1044,7 @@ Personas with unique milestones:
 
 **Challenge Types:**
 
-```typescript
+```tsx
 Difficulty levels:
 - Easy: 1-7 days, $35-50 savings
 - Medium: 14-30 days, $70-150 savings

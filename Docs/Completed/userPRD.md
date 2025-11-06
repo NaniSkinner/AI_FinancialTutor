@@ -95,7 +95,7 @@ This PRD defines the **user-facing features** for SpendSense that are currently 
 
 #### 1.3.1 DashboardHeader Component
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/app/dashboard/page.tsx
 
 interface DashboardHeaderProps {
@@ -141,7 +141,7 @@ export function DashboardHeader({ userName, avatarUrl }: DashboardHeaderProps) {
 
 #### 1.3.2 HeroInsight Component
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/components/Dashboard/HeroInsight.tsx
 
 interface HeroInsightProps {
@@ -227,7 +227,7 @@ export function HeroInsight({ persona, signals }: HeroInsightProps) {
 
 #### 1.3.3 FinancialSnapshot Component
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/components/Dashboard/FinancialSnapshot.tsx
 
 interface FinancialSnapshotProps {
@@ -314,7 +314,7 @@ export function FinancialSnapshot({ signals }: FinancialSnapshotProps) {
 
 #### 1.3.4 RecommendationsFeed Component
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/components/Dashboard/RecommendationsFeed.tsx
 
 interface RecommendationsFeedProps {
@@ -382,7 +382,7 @@ export function RecommendationsFeed({ userId }: RecommendationsFeedProps) {
 
 #### 1.3.5 RecommendationCard Component
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/components/Dashboard/RecommendationCard.tsx
 
 interface RecommendationCardProps {
@@ -510,7 +510,7 @@ export function RecommendationCard({
 
 ### 1.4 API Endpoints Required
 
-```typescript
+```tsx
 // GET /api/users/:userId/dashboard
 // Returns: Complete dashboard data
 interface DashboardResponse {
@@ -542,7 +542,7 @@ interface DashboardResponse {
 
 ### 1.5 Mock Data Integration
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/lib/api.ts (extend existing)
 
 export async function getUserDashboard(
@@ -625,7 +625,7 @@ function getMockDashboardData(userId: string): DashboardResponse {
 
 ### 2.2 Component Specification
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/components/Dashboard/ChatWidget.tsx
 
 interface Message {
@@ -802,7 +802,7 @@ export function ChatWidget({ userId }: { userId: string }) {
 
 ### 2.3 API Endpoint
 
-```typescript
+```tsx
 // POST /api/chat
 interface ChatRequest {
   userId: string;
@@ -817,7 +817,7 @@ interface ChatResponse {
 
 ### 2.4 Mock Implementation
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/lib/api.ts
 
 export async function sendChatMessage(
@@ -894,7 +894,7 @@ function getMockChatResponse(message: string): ChatResponse {
 
 ### 3.2 Emergency Fund Calculator
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/components/Calculators/EmergencyFundCalculator.tsx
 
 interface EmergencyFundCalculatorProps {
@@ -1053,7 +1053,7 @@ export function EmergencyFundCalculator({
 
 ### 3.3 Credit Utilization Calculator
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/components/Calculators/CreditUtilizationCalculator.tsx
 
 export function CreditUtilizationCalculator({
@@ -1222,7 +1222,7 @@ export function CreditUtilizationCalculator({
 
 ### 3.4 Calculator Routes
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/app/calculators/page.tsx
 
 export default function CalculatorsPage() {
@@ -1318,7 +1318,7 @@ export default function CalculatorsPage() {
 
 ### 4.2 Progress Tracker Component
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/components/Gamification/ProgressTracker.tsx
 
 interface ProgressTrackerProps {
@@ -1557,7 +1557,7 @@ export function ProgressTracker({ userId, persona }: ProgressTrackerProps) {
 
 ### 4.3 Savings Challenges Component
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/components/Gamification/SavingsChallenge.tsx
 
 interface Challenge {
@@ -1745,7 +1745,7 @@ export function SavingsChallenge({ userId }: { userId: string }) {
 
 ### 4.4 Persona Transition Celebration
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/components/Gamification/TransitionCelebration.tsx
 
 export function TransitionCelebration({
@@ -2048,7 +2048,7 @@ export function TransitionCelebration({
 
 ### 5.3 Email Generation API
 
-```typescript
+```tsx
 // POST /api/emails/weekly-digest
 interface WeeklyDigestRequest {
   userId: string;
@@ -2109,7 +2109,7 @@ export async function generateWeeklyDigest(userId: string): Promise<string> {
 
 ### 6.2 Onboarding Component
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/app/onboarding/page.tsx
 
 export default function OnboardingPage() {
@@ -2385,7 +2385,7 @@ export default function OnboardingPage() {
 
 ### 7.1 Routing Structure
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/app/layout.tsx
 
 export default function RootLayout({
@@ -2423,7 +2423,7 @@ export default function RootLayout({
 
 ### 7.2 API Endpoints Summary
 
-```typescript
+```tsx
 // User Dashboard
 GET  /api/users/:userId/dashboard
 POST /api/recommendations/:id/view
@@ -2449,7 +2449,7 @@ POST /api/emails/send
 
 ### 7.3 Mock Data Extensions
 
-```typescript
+```tsx
 // Path: ui/operator-dashboard/lib/mockData.ts
 
 export const mockUserData = {
@@ -2730,7 +2730,7 @@ npx shadcn-ui@latest add skeleton
 
 ### New Icons Needed (lucide-react)
 
-```typescript
+```tsx
 import {
   Bell,
   Settings,

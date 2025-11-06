@@ -111,7 +111,7 @@ export function AlertItem({ alert, onDismiss }: Props) {
 
 Create `/hooks/useAlerts.ts`:
 
-```typescript
+```tsx
 import useSWR from "swr";
 import { fetchAlerts } from "@/lib/api";
 import type { Alert } from "@/lib/types";
@@ -270,7 +270,7 @@ export function ReviewQueue() {
 
 Create `/hooks/useDebounce.ts`:
 
-```typescript
+```tsx
 import { useState, useEffect } from "react";
 
 export function useDebounce<T>(value: T, delay: number = 300): T {
@@ -478,7 +478,7 @@ export default function OperatorDashboard() {
 
 Add to `/lib/focus-management.ts`:
 
-```typescript
+```tsx
 export function trapFocus(element: HTMLElement) {
   const focusableElements = element.querySelectorAll(
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'

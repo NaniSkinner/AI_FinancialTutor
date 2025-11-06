@@ -123,7 +123,7 @@ mkdir -p ui/operator-dashboard/components/AuditLogs
 
 **Fields:**
 
-```typescript
+```tsx
 interface AuditLogFilters {
   operator_id?: string;
   action?: "approve" | "reject" | "modify" | "flag" | "bulk_approve" | "all";
@@ -221,7 +221,7 @@ interface AuditLogFilters {
 
 **Hook File:** `/ui/operator-dashboard/hooks/useAuditLogs.ts`
 
-```typescript
+```tsx
 import useSWR from "swr";
 import { fetchAuditLogs } from "@/lib/api";
 
@@ -268,7 +268,7 @@ export function useAuditLogs(filters: AuditLogFilters) {
 
 **File:** `/ui/operator-dashboard/components/AuditLogs/index.ts`
 
-```typescript
+```tsx
 export { AuditLogFilters } from "./AuditLogFilters";
 export { AuditLogTable } from "./AuditLogTable";
 export { AuditLogDetails } from "./AuditLogDetails";
@@ -451,7 +451,7 @@ app.include_router(
 - [ ] Implement `login()` to call `/api/auth/login`
 - [ ] Parse and store JWT payload
 
-```typescript
+```tsx
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -542,7 +542,7 @@ export const useAuth = create<AuthState>()(
 - [ ] Handle 401 responses (redirect to login)
 - [ ] Handle 403 responses (show permission error)
 
-```typescript
+```tsx
 async function apiRequest<T>(
   endpoint: string,
   options?: RequestInit
@@ -617,7 +617,7 @@ async function apiRequest<T>(
 - [ ] Show loading state while checking
 - [ ] Allow children to render if authenticated
 
-```typescript
+```tsx
 "use client";
 
 import { useEffect } from "react";
@@ -803,7 +803,7 @@ Add CSV export functionality for audit logs, recommendations, and operator stati
 - [ ] Add timestamp to filename
 - [ ] Handle large datasets (streaming if needed)
 
-```typescript
+```tsx
 export async function exportAuditLogsToCsv(filters: AuditLogFilters) {
   // Fetch all matching records (no pagination)
   const logs = await fetchAuditLogs({ ...filters, limit: 10000 });
@@ -1043,7 +1043,7 @@ Current test coverage is ~15%. Need to increase to 80% for production readiness.
 
 **File:** `/ui/operator-dashboard/__tests__/utils/test-utils.tsx`
 
-```typescript
+```tsx
 import React from "react";
 import { render } from "@testing-library/react";
 import { SWRConfig } from "swr";
@@ -1457,7 +1457,7 @@ def undo_recommendation(
 - [ ] Create `undoAction(id: string)` function
 - [ ] Call POST `/api/operator/recommendations/{id}/undo`
 
-```typescript
+```tsx
 export async function undoAction(id: string): Promise<Recommendation> {
   return apiRequest(`/api/operator/recommendations/${id}/undo`, {
     method: "POST",
@@ -1479,7 +1479,7 @@ export async function undoAction(id: string): Promise<Recommendation> {
 - [ ] Handle undo click
 - [ ] Refresh card after undo
 
-```typescript
+```tsx
 const [showUndoButton, setShowUndoButton] = useState(false);
 const [undoCountdown, setUndoCountdown] = useState<number | null>(null);
 
@@ -1692,7 +1692,7 @@ Add performance monitoring to track page load times, API response times, and com
 - [ ] Log performance to console (dev) or analytics (prod)
 - [ ] Measure time in milliseconds
 
-```typescript
+```tsx
 import { useEffect, useRef } from "react";
 
 export function usePerformanceMonitoring(componentName: string) {
@@ -1757,7 +1757,7 @@ function logPerformance(data: {
 - [ ] Call hook with component name
 - [ ] Verify performance logs in console
 
-```typescript
+```tsx
 import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 
 export function ReviewQueue() {
@@ -2071,7 +2071,7 @@ app.include_router(
 - [ ] Delete note with confirmation
 - [ ] Show operator name and timestamp
 
-```typescript
+```tsx
 export function NotesPanel({ recommendationId }: { recommendationId: string }) {
   const { data: notes, mutate } = useNotes(recommendationId);
   const [newNoteText, setNewNoteText] = useState("");
@@ -2381,7 +2381,7 @@ app.include_router(
 - [ ] Handle reconnection
 - [ ] Skip in mock data mode
 
-```typescript
+```tsx
 import { useEffect } from "react";
 import { useRecommendations } from "./useRecommendations";
 import { useOperatorStats } from "./useOperatorStats";
@@ -2455,7 +2455,7 @@ export function useRealtimeUpdates() {
 - [ ] Call hook in main dashboard component
 - [ ] Add indicator showing "Live" status
 
-```typescript
+```tsx
 import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
 
 export default function OperatorDashboard() {
@@ -2669,7 +2669,7 @@ def delete_tag(
 - [ ] Remove tag with confirmation
 - [ ] Fetch available tags from API
 
-```typescript
+```tsx
 export function TagsPanel({ recommendationId }: { recommendationId: string }) {
   const { data: tags, mutate } = useTags(recommendationId);
   const { data: availableTags } = useAvailableTags();

@@ -62,16 +62,20 @@ export function SubscriptionSavingsCalculator({
 
       <CardContent className="space-y-4 sm:space-y-6">
         {/* Current Spending Overview */}
-        <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+        <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div>
-            <p className="text-sm text-gray-600 mb-1">Monthly Total</p>
-            <p className="text-2xl font-bold">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+              Monthly Total
+            </p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               ${formatCurrency(totalMonthly, 2)}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-600 mb-1">Annual Total</p>
-            <p className="text-2xl font-bold">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+              Annual Total
+            </p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               ${formatCurrency(totalAnnual, 2)}
             </p>
           </div>
@@ -90,7 +94,7 @@ export function SubscriptionSavingsCalculator({
           </Alert>
         ) : (
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm text-gray-700">
+            <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-300">
               Your Subscriptions (sorted by cost)
             </h3>
             {sortedWithIndex.map((sub) => (
@@ -98,8 +102,8 @@ export function SubscriptionSavingsCalculator({
                 key={sub.originalIndex}
                 className={`flex items-center justify-between p-3 border rounded-lg transition-colors ${
                   selectedForCancellation.has(sub.originalIndex)
-                    ? "bg-red-50 border-red-200"
-                    : "bg-white border-gray-200"
+                    ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
+                    : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                 }`}
               >
                 <div className="flex items-center gap-3 flex-1">
@@ -110,17 +114,21 @@ export function SubscriptionSavingsCalculator({
                     }
                   />
                   <div className="flex-1">
-                    <p className="font-medium">{sub.name}</p>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">
+                      {sub.name}
+                    </p>
                     {sub.frequency && (
-                      <p className="text-xs text-gray-500">{sub.frequency}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {sub.frequency}
+                      </p>
                     )}
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold">
+                  <p className="font-semibold text-gray-900 dark:text-gray-100">
                     ${formatCurrency(sub.amount, 2)}/mo
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     ${formatCurrency(sub.amount * 12, 2)}/yr
                   </p>
                 </div>
@@ -131,37 +139,45 @@ export function SubscriptionSavingsCalculator({
 
         {/* Potential Savings */}
         {potentialMonthlySavings > 0 && (
-          <div className="space-y-4 p-6 bg-linear-to-br from-green-50 to-emerald-50 rounded-lg border-2 border-green-200">
-            <div className="flex items-center gap-2 text-green-800">
+          <div className="space-y-4 p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border-2 border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-2 text-green-800 dark:text-green-300">
               <TrendingDown className="h-5 w-5" />
               <h3 className="font-semibold">Potential Savings</h3>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-green-700 mb-1">Monthly Savings</p>
-                <p className="text-3xl font-bold text-green-900">
+                <p className="text-sm text-green-700 dark:text-green-400 mb-1">
+                  Monthly Savings
+                </p>
+                <p className="text-3xl font-bold text-green-900 dark:text-green-100">
                   ${formatCurrency(potentialMonthlySavings, 2)}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-green-700 mb-1">Annual Savings</p>
-                <p className="text-3xl font-bold text-green-900">
+                <p className="text-sm text-green-700 dark:text-green-400 mb-1">
+                  Annual Savings
+                </p>
+                <p className="text-3xl font-bold text-green-900 dark:text-green-100">
                   ${formatCurrency(potentialAnnualSavings, 2)}
                 </p>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-green-200">
+            <div className="pt-3 border-t border-green-200 dark:border-green-800">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-green-700">New Monthly Spending</span>
-                <span className="font-bold text-green-900">
+                <span className="text-green-700 dark:text-green-400">
+                  New Monthly Spending
+                </span>
+                <span className="font-bold text-green-900 dark:text-green-100">
                   ${formatCurrency(newMonthlySpending, 2)}
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm mt-1">
-                <span className="text-green-700">Reduction</span>
-                <span className="font-bold text-green-900">
+                <span className="text-green-700 dark:text-green-400">
+                  Reduction
+                </span>
+                <span className="font-bold text-green-900 dark:text-green-100">
                   {percentageSavings.toFixed(1)}%
                 </span>
               </div>
@@ -171,14 +187,14 @@ export function SubscriptionSavingsCalculator({
 
         {/* Tips & Recommendations */}
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm text-gray-700">
+          <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-300">
             Subscription Management Tips
           </h3>
           <div className="space-y-2">
-            <Alert className="bg-blue-50 border-blue-200">
+            <Alert className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
               <div className="flex items-start gap-2">
-                <DollarSign className="h-4 w-4 text-blue-600 mt-0.5" />
-                <AlertDescription className="text-sm text-blue-800">
+                <DollarSign className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5" />
+                <AlertDescription className="text-sm text-blue-800 dark:text-blue-300">
                   <strong>Tip:</strong> Review your subscriptions quarterly.
                   Many services offer annual plans with 15-20% discounts
                   compared to monthly billing.
@@ -186,10 +202,10 @@ export function SubscriptionSavingsCalculator({
               </div>
             </Alert>
             {totalMonthly > 200 && (
-              <Alert className="bg-yellow-50 border-yellow-200">
+              <Alert className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
                 <div className="flex items-start gap-2">
-                  <Info className="h-4 w-4 text-yellow-600 mt-0.5" />
-                  <AlertDescription className="text-sm text-yellow-800">
+                  <Info className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mt-0.5" />
+                  <AlertDescription className="text-sm text-yellow-800 dark:text-yellow-300">
                     Your subscription spending is over $200/month. Consider
                     which services you actively use each month.
                   </AlertDescription>

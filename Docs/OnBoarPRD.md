@@ -24,7 +24,7 @@
 
 **Path:** `ui/operator-dashboard/app/onboarding/page.tsx`
 
-```typescript
+```tsx
 export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [consents, setConsents] = useState({
@@ -298,7 +298,7 @@ export default function OnboardingPage() {
 
 **Path:** `ui/operator-dashboard/lib/consents.ts`
 
-```typescript
+```tsx
 export interface UserConsents {
   dataAnalysis: boolean;
   recommendations: boolean;
@@ -345,7 +345,7 @@ export async function getUserConsents(userId: string): Promise<UserConsents> {
 
 **Path:** `ui/operator-dashboard/app/settings/page.tsx`
 
-```typescript
+```tsx
 export default function SettingsPage() {
   const { userId } = useUser();
   const [consents, setConsents] = useState<UserConsents | null>(null);
@@ -484,7 +484,7 @@ export default function SettingsPage() {
 
 ## API Endpoints
 
-```typescript
+```tsx
 // POST /api/users/:userId/complete-onboarding
 interface CompleteOnboardingRequest {
   userId: string;

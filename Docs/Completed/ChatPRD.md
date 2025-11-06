@@ -20,7 +20,7 @@
 
 **Path:** `ui/operator-dashboard/components/Dashboard/ChatWidget.tsx`
 
-```typescript
+```tsx
 interface Message {
   id: string;
   role: "user" | "assistant";
@@ -197,7 +197,7 @@ export function ChatWidget({ userId }: { userId: string }) {
 
 ## API Endpoint
 
-```typescript
+```tsx
 // POST /api/chat
 interface ChatRequest {
   userId: string;
@@ -216,7 +216,7 @@ interface ChatResponse {
 
 **Path:** `ui/operator-dashboard/lib/api.ts`
 
-```typescript
+```tsx
 export async function sendChatMessage(
   userId: string,
   message: string
@@ -280,7 +280,7 @@ function getMockChatResponse(message: string): ChatResponse {
 
 Pre-populate with context-aware suggested questions:
 
-```typescript
+```tsx
 const suggestedQuestions = {
   high_utilization: [
     "Why is my credit utilization important?",

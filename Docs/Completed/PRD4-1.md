@@ -133,7 +133,7 @@ NEXT_PUBLIC_OPERATOR_ID=op_001
 
 ### lib/types.ts
 
-```typescript
+```tsx
 // Recommendation Status
 export type RecommendationStatus =
   | "pending"
@@ -445,7 +445,7 @@ ALTER TABLE recommendations ADD COLUMN operator_notes TEXT;
 
 ### lib/utils.ts
 
-```typescript
+```tsx
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 

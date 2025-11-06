@@ -169,7 +169,7 @@ Update `tsconfig.json`:
 
 Create `/lib/types.ts`:
 
-```typescript
+```tsx
 // Core Types for Operator Dashboard
 
 export interface Recommendation {
@@ -319,7 +319,7 @@ export interface BulkApproveResult {
 
 Create `/lib/api.ts`:
 
-```typescript
+```tsx
 // API Client for Operator Dashboard
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -456,7 +456,7 @@ export async function fetchAuditLogs(params: {
 
 Create `/lib/utils.ts`:
 
-```typescript
+```tsx
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -541,7 +541,7 @@ export function formatPersonaName(persona: string): string {
 
 Update `tailwind.config.ts`:
 
-```typescript
+```tsx
 import type { Config } from "tailwindcss";
 
 const config: Config = {

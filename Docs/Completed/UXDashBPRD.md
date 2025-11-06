@@ -61,7 +61,7 @@
 
 **Path:** `ui/operator-dashboard/app/dashboard/page.tsx`
 
-```typescript
+```tsx
 interface DashboardHeaderProps {
   userName: string;
   avatarUrl?: string;
@@ -109,7 +109,7 @@ export function DashboardHeader({ userName, avatarUrl }: DashboardHeaderProps) {
 
 **Path:** `ui/operator-dashboard/components/Dashboard/HeroInsight.tsx`
 
-```typescript
+```tsx
 interface HeroInsightProps {
   persona: {
     primary: string;
@@ -197,7 +197,7 @@ export function HeroInsight({ persona, signals }: HeroInsightProps) {
 
 **Path:** `ui/operator-dashboard/components/Dashboard/FinancialSnapshot.tsx`
 
-```typescript
+```tsx
 interface FinancialSnapshotProps {
   signals: UserSignals;
 }
@@ -286,7 +286,7 @@ export function FinancialSnapshot({ signals }: FinancialSnapshotProps) {
 
 **Path:** `ui/operator-dashboard/components/Dashboard/RecommendationsFeed.tsx`
 
-```typescript
+```tsx
 interface RecommendationsFeedProps {
   userId: string;
 }
@@ -355,7 +355,7 @@ export function RecommendationsFeed({ userId }: RecommendationsFeedProps) {
 
 **Path:** `ui/operator-dashboard/components/Dashboard/RecommendationCard.tsx`
 
-```typescript
+```tsx
 interface RecommendationCardProps {
   recommendation: Recommendation;
   onView: () => void;
@@ -483,7 +483,7 @@ export function RecommendationCard({
 
 **Path:** `ui/operator-dashboard/lib/api.ts` (extend existing)
 
-```typescript
+```tsx
 export async function getUserDashboard(
   userId: string
 ): Promise<DashboardResponse> {
@@ -554,7 +554,7 @@ function getMockDashboardData(userId: string): DashboardResponse {
 
 ## API Endpoints Required
 
-```typescript
+```tsx
 // GET /api/users/:userId/dashboard
 // Returns: Complete dashboard data
 interface DashboardResponse {

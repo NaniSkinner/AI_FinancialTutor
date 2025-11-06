@@ -23,7 +23,7 @@
 
 **Path:** `ui/operator-dashboard/components/Calculators/EmergencyFundCalculator.tsx`
 
-```typescript
+```tsx
 interface EmergencyFundCalculatorProps {
   initialMonthlyExpenses?: number;
   initialCurrentSavings?: number;
@@ -184,7 +184,7 @@ export function EmergencyFundCalculator({
 
 **Path:** `ui/operator-dashboard/components/Calculators/CreditUtilizationCalculator.tsx`
 
-```typescript
+```tsx
 export function CreditUtilizationCalculator({
   initialCards = [],
 }: {
@@ -355,7 +355,7 @@ export function CreditUtilizationCalculator({
 
 **Path:** `ui/operator-dashboard/app/calculators/page.tsx`
 
-```typescript
+```tsx
 export default function CalculatorsPage() {
   const [activeCalculator, setActiveCalculator] =
     useState<string>("emergency-fund");

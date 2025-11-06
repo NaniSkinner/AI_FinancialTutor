@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   EmergencyFundCalculator,
   CreditUtilizationCalculator,
@@ -11,7 +12,12 @@ import {
 import { UserSearch } from "@/components/UserExplorer/UserSearch";
 import { useUserSignals } from "@/hooks/useUserSignals";
 import { Button, Spinner, Badge } from "@/components/Common";
-import { Shield, CreditCard as CreditCardIcon, DollarSign } from "lucide-react";
+import {
+  Shield,
+  CreditCard as CreditCardIcon,
+  DollarSign,
+  ChevronLeft,
+} from "lucide-react";
 import { getPersonaColor, formatPersonaName } from "@/lib/utils";
 import { estimateMonthlyExpenses } from "@/components/Calculators/utils";
 
@@ -21,10 +27,32 @@ type CalculatorType =
   | "subscription-savings";
 
 export default function CalculatorsPage() {
-  const [activeCalculator, setActiveCalculator] =
-    useState<CalculatorType>("emergency-fund");
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const typeParam = searchParams.get("type") as CalculatorType | null;
+  const userIdParam = searchParams.get("userId");
+
+  const [activeCalculator, setActiveCalculator] = useState<CalculatorType>(
+    typeParam || "emergency-fund"
+  );
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(
+    userIdParam
+  );
   const { data: userData, isLoading } = useUserSignals(selectedUserId);
+
+  // Update active calculator when URL parameter changes
+  useEffect(() => {
+    if (typeParam && typeParam !== activeCalculator) {
+      setActiveCalculator(typeParam);
+    }
+  }, [typeParam]);
+
+  // Update selected user when URL parameter changes
+  useEffect(() => {
+    if (userIdParam && userIdParam !== selectedUserId) {
+      setSelectedUserId(userIdParam);
+    }
+  }, [userIdParam]);
 
   const calculators = [
     {
@@ -92,12 +120,13 @@ export default function CalculatorsPage() {
                 Interactive tools to explore financial scenarios
               </p>
             </div>
-            <a
-              href="/"
-              className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="flex items-center gap-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
             >
-              ← Back to Dashboard
-            </a>
+              <ChevronLeft className="h-4 w-4" />
+              Back to Dashboard
+            </button>
           </div>
         </div>
       </header>

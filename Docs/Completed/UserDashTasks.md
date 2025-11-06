@@ -151,7 +151,7 @@ npm install react-markdown lucide-react
 
 Extend your `lib/types.ts` file with the following types (add to existing file):
 
-```typescript
+```tsx
 // Add to lib/types.ts
 
 export interface DashboardResponse {
@@ -221,7 +221,7 @@ operator-dashboard/
 
 **File:** `app/dashboard/page.tsx`
 
-```typescript
+```tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -321,7 +321,7 @@ export default function DashboardPage() {
 
 **File:** `components/USER/DashboardHeader.tsx`
 
-```typescript
+```tsx
 "use client";
 
 import { useState } from "react";
@@ -451,7 +451,7 @@ export function DashboardHeader({ userName, avatarUrl }: DashboardHeaderProps) {
 
 **File:** `components/USER/HeroInsight.tsx`
 
-```typescript
+```tsx
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -585,7 +585,7 @@ export function HeroInsight({ persona, signals }: HeroInsightProps) {
 
 **File:** `components/USER/FinancialSnapshot.tsx`
 
-```typescript
+```tsx
 "use client";
 
 import {
@@ -728,7 +728,7 @@ export function FinancialSnapshot({ signals }: FinancialSnapshotProps) {
 
 **File:** `components/USER/RecommendationsFeed.tsx`
 
-```typescript
+```tsx
 "use client";
 
 import { useState } from "react";
@@ -872,7 +872,7 @@ export function RecommendationsFeed({
 
 **File:** `components/USER/RecommendationCard.tsx`
 
-```typescript
+```tsx
 "use client";
 
 import { useState } from "react";
@@ -1064,7 +1064,7 @@ export function RecommendationCard({
 
 Add these functions to your existing `lib/api.ts` file:
 
-```typescript
+```tsx
 // Add to lib/api.ts
 
 import type { DashboardResponse, Recommendation } from "./types";
@@ -1165,7 +1165,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 Create a new file `lib/mock-data.ts`:
 
-```typescript
+```tsx
 // lib/mock-data.ts
 
 import type { DashboardResponse, Recommendation } from "./types";
@@ -1499,7 +1499,7 @@ Open [http://localhost:3000/dashboard](http://localhost:3000/dashboard)
 
 In `lib/mock-data.ts`, change the `primary` persona:
 
-```typescript
+```tsx
 persona: {
   primary: 'student',  // Try: student, savings_builder, subscription_heavy
   match_strength: 'strong',
@@ -1511,7 +1511,7 @@ persona: {
 
 In `lib/mock-data.ts`, add to the recommendations array:
 
-```typescript
+```tsx
 {
   id: 'rec_006',
   user_id: userId,
@@ -1528,7 +1528,7 @@ In `lib/mock-data.ts`, add to the recommendations array:
 
 In `lib/mock-data.ts`, modify the signals object:
 
-```typescript
+```tsx
 signals: {
   credit: {
     aggregate_utilization_pct: 25,  // Change from 68 to 25

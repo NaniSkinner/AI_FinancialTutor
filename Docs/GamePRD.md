@@ -22,7 +22,7 @@
 
 **Path:** `ui/operator-dashboard/components/Gamification/ProgressTracker.tsx`
 
-```typescript
+```tsx
 interface ProgressTrackerProps {
   userId: string;
   persona: string;
@@ -263,7 +263,7 @@ export function ProgressTracker({ userId, persona }: ProgressTrackerProps) {
 
 **Path:** `ui/operator-dashboard/components/Gamification/SavingsChallenge.tsx`
 
-```typescript
+```tsx
 interface Challenge {
   id: string;
   title: string;
@@ -451,7 +451,7 @@ export function SavingsChallenge({ userId }: { userId: string }) {
 
 **Path:** `ui/operator-dashboard/components/Gamification/TransitionCelebration.tsx`
 
-```typescript
+```tsx
 export function TransitionCelebration({
   transition,
 }: {
@@ -531,7 +531,7 @@ export function TransitionCelebration({
 
 **Path:** `ui/operator-dashboard/app/progress/page.tsx`
 
-```typescript
+```tsx
 export default function ProgressPage() {
   const { userId } = useUser();
   const { data: userData } = useUserData(userId);
@@ -582,7 +582,7 @@ export default function ProgressPage() {
 
 **Path:** `ui/operator-dashboard/lib/mockData.ts` (extend)
 
-```typescript
+```tsx
 export const mockProgressData: ProgressData = {
   streak: 7,
   level: 2,

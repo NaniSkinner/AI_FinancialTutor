@@ -57,7 +57,7 @@ export function EmergencyFundCalculator({
               className="flex-1 w-full"
               min="0"
             />
-            <span className="text-xl sm:text-2xl font-bold text-gray-600">
+            <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               ${formatCurrency(monthlyExpenses)}
             </span>
           </div>
@@ -74,7 +74,7 @@ export function EmergencyFundCalculator({
               className="flex-1 w-full"
               min="0"
             />
-            <span className="text-xl sm:text-2xl font-bold text-gray-600">
+            <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               ${formatCurrency(currentSavings)}
             </span>
           </div>
@@ -84,7 +84,9 @@ export function EmergencyFundCalculator({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label>Target Coverage</Label>
-            <span className="text-sm font-medium">{targetMonths} months</span>
+            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {targetMonths} months
+            </span>
           </div>
           <Slider
             value={[targetMonths]}
@@ -94,7 +96,7 @@ export function EmergencyFundCalculator({
             step={1}
             className="w-full"
           />
-          <div className="flex justify-between text-xs text-gray-500">
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
             <span>1 month</span>
             <span>12 months</span>
           </div>
@@ -112,18 +114,18 @@ export function EmergencyFundCalculator({
         </div>
 
         {/* Results */}
-        <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+        <div className="space-y-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div>
-            <p className="text-sm text-gray-600 mb-1">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
               Your Emergency Fund Goal
             </p>
-            <p className="text-3xl font-bold">
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               ${formatCurrency(targetAmount)}
             </p>
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-sm text-gray-900 dark:text-gray-100">
               <span>Progress</span>
               <span className="font-medium">{progress.toFixed(0)}%</span>
             </div>
@@ -131,28 +133,32 @@ export function EmergencyFundCalculator({
           </div>
 
           {remaining > 0 ? (
-            <div className="space-y-2 pt-2 border-t border-gray-200">
+            <div className="space-y-2 pt-2 border-t border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
-                <span className="text-sm">Amount Remaining</span>
-                <span className="text-lg font-bold">
+                <span className="text-sm text-gray-900 dark:text-gray-100">
+                  Amount Remaining
+                </span>
+                <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
                   ${formatCurrency(remaining)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm">Time to Goal</span>
-                <span className="text-lg font-bold">
+                <span className="text-sm text-gray-900 dark:text-gray-100">
+                  Time to Goal
+                </span>
+                <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
                   {monthsToGoal} {monthsToGoal === 1 ? "month" : "months"}
                 </span>
               </div>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 dark:text-gray-400">
                 Saving ${formatCurrency(monthlySavingsGoal)}/month
               </p>
             </div>
           ) : (
-            <Alert className="bg-green-50 border-green-200">
+            <Alert className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
               <div className="flex items-start gap-2">
-                <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
-                <AlertDescription className="text-green-800">
+                <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+                <AlertDescription className="text-green-800 dark:text-green-300">
                   Congratulations! You&apos;ve reached your {targetMonths}-month
                   emergency fund goal!
                 </AlertDescription>

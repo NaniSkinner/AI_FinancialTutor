@@ -266,7 +266,7 @@ export function AuditLogTable({ logs, onRowClick }: Props) {
 
 Uses existing endpoint:
 
-```typescript
+```tsx
 // /ui/operator-dashboard/lib/api.ts
 
 export async function fetchAuditLogs(params: {
@@ -333,7 +333,7 @@ Export audit logs and recommendation data for:
 
 ### 3.3 Implementation
 
-```typescript
+```tsx
 // /ui/operator-dashboard/lib/export.ts
 
 export async function exportAuditLogsToCsv(filters: AuditLogFilters) {
@@ -674,7 +674,7 @@ async def approve_recommendation(...):
 
 ### 5.4 Frontend Implementation
 
-```typescript
+```tsx
 // /ui/operator-dashboard/hooks/useRealtimeUpdates.ts
 
 export function useRealtimeUpdates() {
@@ -1094,7 +1094,7 @@ __tests__/
 
 #### Component Test Template
 
-```typescript
+```tsx
 // __tests__/components/ReviewQueue.test.tsx
 
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
@@ -1158,7 +1158,7 @@ describe("ReviewQueue", () => {
 
 #### Hook Test Template
 
-```typescript
+```tsx
 // __tests__/hooks/useRecommendations.test.ts
 
 import { renderHook, waitFor } from "@testing-library/react";
@@ -1350,7 +1350,7 @@ def approve_recommendation(
 
 #### Frontend: Token Management
 
-```typescript
+```tsx
 // /ui/operator-dashboard/lib/auth.ts
 
 import { create } from "zustand";
@@ -1543,7 +1543,7 @@ export default function RootLayout({
 
 #### Frontend Performance Hook
 
-```typescript
+```tsx
 // /ui/operator-dashboard/hooks/usePerformanceMonitoring.ts
 
 export function usePerformanceMonitoring(componentName: string) {
