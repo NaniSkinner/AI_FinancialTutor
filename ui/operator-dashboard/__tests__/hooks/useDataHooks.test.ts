@@ -181,6 +181,7 @@ describe("useUserSignals", () => {
         median_pay_gap_days: 14,
         income_variability_pct: 5,
         cash_flow_buffer_months: 2.0,
+        monthly_income: 4200,
       },
     },
   };

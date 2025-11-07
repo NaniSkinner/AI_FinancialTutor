@@ -245,6 +245,7 @@ describe("SignalCard", () => {
         median_pay_gap_days: 14,
         income_variability_pct: 5,
         cash_flow_buffer_months: 2.5,
+        monthly_income: 4200,
       };
 
       render(<SignalCard title="Income" data={incomeData} type="income" />);
@@ -266,6 +267,7 @@ describe("SignalCard", () => {
         median_pay_gap_days: 30,
         income_variability_pct: 10,
         cash_flow_buffer_months: 3.0,
+        monthly_income: 4200,
       };
 
       render(<SignalCard title="Income" data={incomeData} type="income" />);
@@ -281,6 +283,7 @@ describe("SignalCard", () => {
         median_pay_gap_days: 45,
         income_variability_pct: 35,
         cash_flow_buffer_months: 0.5,
+        monthly_income: 3500,
       };
 
       render(<SignalCard title="Income" data={incomeData} type="income" />);
@@ -296,6 +299,7 @@ describe("SignalCard", () => {
         median_pay_gap_days: 30,
         income_variability_pct: 5,
         cash_flow_buffer_months: 2.0,
+        monthly_income: 4200,
       };
 
       render(<SignalCard title="Income" data={incomeData} type="income" />);
@@ -311,6 +315,7 @@ describe("SignalCard", () => {
         median_pay_gap_days: 7,
         income_variability_pct: 15,
         cash_flow_buffer_months: 0.3,
+        monthly_income: 3000,
       };
 
       render(<SignalCard title="Income" data={incomeData} type="income" />);
