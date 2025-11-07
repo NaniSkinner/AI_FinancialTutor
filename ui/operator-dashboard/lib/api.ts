@@ -32,28 +32,37 @@ const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 // ============================================================================
 
 /**
- * Detect if we're running in a production environment
+ * Detect if we're running in a production environment at runtime
  * (not localhost or 127.0.0.1)
+ * Must be a function to work correctly in Next.js SSR
  */
-const IS_PRODUCTION =
-  typeof window !== "undefined" &&
-  !window.location.hostname.includes("localhost") &&
-  !window.location.hostname.includes("127.0.0.1");
+function isProductionEnvironment(): boolean {
+  if (typeof window === "undefined") return false;
+  const hostname = window.location.hostname;
+  return !hostname.includes("localhost") && !hostname.includes("127.0.0.1");
+}
 
 /**
+ * Check if we should use mock data
  * Force mock mode if we detect production with localhost API URL
  * This prevents CORS errors when deployed to Vercel/Netlify
  */
-const SHOULD_USE_MOCK =
-  USE_MOCK_DATA || (IS_PRODUCTION && API_URL.includes("localhost"));
+function shouldUseMockData(): boolean {
+  const isProd = isProductionEnvironment();
+  const hasLocalhostApi = API_URL.includes("localhost");
+  const forceMock = isProd && hasLocalhostApi;
 
-// Log warning if we're forcing mock mode due to localhost detection
-if (SHOULD_USE_MOCK && IS_PRODUCTION && API_URL.includes("localhost")) {
-  console.warn(
-    "[API] Production environment detected with localhost API URL - forcing mock mode to prevent CORS errors"
-  );
-  console.warn("[API] API_URL:", API_URL);
-  console.warn("[API] Hostname:", typeof window !== "undefined" ? window.location.hostname : "SSR");
+  // Log warning if we're forcing mock mode due to localhost detection
+  if (forceMock && typeof window !== "undefined") {
+    console.warn(
+      "[API] Production environment detected with localhost API URL - forcing mock mode to prevent CORS errors"
+    );
+    console.warn("[API] API_URL:", API_URL);
+    console.warn("[API] Hostname:", window.location.hostname);
+    console.warn("[API] USE_MOCK_DATA env:", USE_MOCK_DATA);
+  }
+
+  return USE_MOCK_DATA || forceMock;
 }
 
 // Stateful mock data - creates a mutable copy of mock recommendations
@@ -134,7 +143,7 @@ export async function fetchRecommendations(filters: {
   persona?: string;
   priority?: string;
 }): Promise<Recommendation[]> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Filter mock data based on criteria (use runtime copy for stateful behavior)
     return runtimeMockRecommendations.filter((rec) => {
       if (
@@ -180,7 +189,7 @@ export async function approveRecommendation(
   id: string,
   data: { notes: string }
 ): Promise<Recommendation> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Mock: Find recommendation and update its status to approved
     const rec = runtimeMockRecommendations.find((r) => r.id === id);
     if (rec) {
@@ -215,7 +224,7 @@ export async function rejectRecommendation(
   id: string,
   data: { reason: string }
 ): Promise<Recommendation> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     const rec = runtimeMockRecommendations.find((r) => r.id === id);
     if (rec) {
       const now = new Date().toISOString();
@@ -249,7 +258,7 @@ export async function modifyRecommendation(
   id: string,
   modifications: Partial<{ rationale: string; priority: string; title: string }>
 ): Promise<Recommendation> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     const rec = runtimeMockRecommendations.find((r) => r.id === id);
     if (rec) {
       // Apply modifications directly to the recommendation
@@ -273,7 +282,7 @@ export async function flagRecommendation(
   id: string,
   data: { reason: string }
 ): Promise<Recommendation> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     const rec = runtimeMockRecommendations.find((r) => r.id === id);
     if (rec) {
       const now = new Date().toISOString();
@@ -308,7 +317,7 @@ export async function undoAction(id: string): Promise<{
   undone_by: string;
   undone_at: string;
 }> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     const rec = runtimeMockRecommendations.find((r) => r.id === id);
     if (rec && rec.previous_status) {
       // Restore previous status
@@ -348,7 +357,7 @@ export async function bulkApproveRecommendations(data: {
   recommendation_ids: string[];
   notes: string;
 }): Promise<BulkApproveResult> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Update all selected recommendations to approved status
     data.recommendation_ids.forEach((id) => {
       const rec = runtimeMockRecommendations.find((r) => r.id === id);
@@ -388,7 +397,7 @@ export async function fetchUserSignals(
   userId: string,
   windowType: string = "30d"
 ): Promise<UserSignals> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     return mockUserSignals[userId] || mockUserSignals.user_123;
   }
 
@@ -405,7 +414,7 @@ export async function fetchUserSignals(
 export async function fetchPersonaHistory(
   userId: string
 ): Promise<PersonaHistoryEntry[]> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     return mockPersonaHistory[userId] || [];
   }
 
@@ -427,7 +436,7 @@ export type { PersonaHistoryEntry };
 export async function fetchDecisionTrace(
   recommendationId: string
 ): Promise<DecisionTrace> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     return mockDecisionTraces[recommendationId] || mockDecisionTraces.rec_001;
   }
 
@@ -446,7 +455,7 @@ export async function fetchDecisionTrace(
 export async function fetchOperatorStats(
   operatorId?: string
 ): Promise<OperatorStats> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     return mockOperatorStats;
   }
 
@@ -463,7 +472,7 @@ export async function fetchOperatorStats(
  * @returns Array of alerts
  */
 export async function fetchAlerts(): Promise<Alert[]> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     return mockAlerts;
   }
 
@@ -510,7 +519,7 @@ export interface Note {
  * Get all notes for a recommendation
  */
 export async function fetchNotes(recommendationId: string): Promise<Note[]> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Mock notes data
     return [
       {
@@ -542,7 +551,7 @@ export async function createNote(
   recommendationId: string,
   noteText: string
 ): Promise<Note> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Mock create note
     const newNote: Note = {
       note_id: `note_${recommendationId}_${Date.now()}`,
@@ -568,7 +577,7 @@ export async function updateNote(
   noteId: string,
   noteText: string
 ): Promise<Note> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Mock update note
     const parts = noteId.split("_");
     const recommendationId = parts.slice(1, -1).join("_");
@@ -593,7 +602,7 @@ export async function updateNote(
  * Delete a note
  */
 export async function deleteNote(noteId: string): Promise<void> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Mock delete note
     return Promise.resolve();
   }
@@ -627,7 +636,7 @@ let mockTagsStorage: Tag[] = [];
  * Get all available predefined tags
  */
 export async function fetchAvailableTags(): Promise<AvailableTags> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     return {
       tags: [
         "needs_review",
@@ -659,7 +668,7 @@ export async function fetchAvailableTags(): Promise<AvailableTags> {
  * Get all tags for a recommendation
  */
 export async function fetchTags(recommendationId: string): Promise<Tag[]> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Return tags for this recommendation from mock storage
     return mockTagsStorage.filter(
       (tag) => tag.recommendation_id === recommendationId
@@ -676,7 +685,7 @@ export async function addTag(
   recommendationId: string,
   tagName: string
 ): Promise<Tag> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Check if tag already exists
     const existing = mockTagsStorage.find(
       (tag) =>
@@ -709,7 +718,7 @@ export async function addTag(
  * Remove a tag
  */
 export async function deleteTag(tagId: string): Promise<void> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Remove from mock storage
     mockTagsStorage = mockTagsStorage.filter((tag) => tag.tag_id !== tagId);
     return Promise.resolve();
@@ -780,7 +789,7 @@ export async function fetchAnalytics(
   startDate?: string,
   endDate?: string
 ): Promise<AnalyticsData> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Generate mock analytics data
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -900,7 +909,7 @@ function generateMockTimeline(days: number): ActionTimeline[] {
 export async function getUserDashboard(
   userId: string
 ): Promise<DashboardResponse> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     return getMockDashboardData(userId);
   }
 
@@ -931,7 +940,7 @@ export async function recordRecommendationView(
 ): Promise<void> {
   console.log("Recording view for:", recommendationId);
 
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     return Promise.resolve();
   }
 
@@ -956,7 +965,7 @@ export async function markRecommendationComplete(
 ): Promise<void> {
   console.log("Marking complete:", recommendationId, "for user:", userId);
 
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500));
     return Promise.resolve();
@@ -1001,7 +1010,7 @@ export async function sendChatMessage(
   persona?: string,
   mode: "user" | "operator" = "user"
 ): Promise<ChatResponse> {
-  if (SHOULD_USE_MOCK) {
+  if (shouldUseMockData()) {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 800));
     return getMockChatResponse(message, userId, persona, mode);

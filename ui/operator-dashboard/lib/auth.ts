@@ -23,28 +23,37 @@ const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 // ============================================================================
 
 /**
- * Detect if we're running in a production environment
+ * Detect if we're running in a production environment at runtime
  * (not localhost or 127.0.0.1)
+ * Must be a function to work correctly in Next.js SSR
  */
-const IS_PRODUCTION =
-  typeof window !== "undefined" &&
-  !window.location.hostname.includes("localhost") &&
-  !window.location.hostname.includes("127.0.0.1");
+function isProductionEnvironment(): boolean {
+  if (typeof window === "undefined") return false;
+  const hostname = window.location.hostname;
+  return !hostname.includes("localhost") && !hostname.includes("127.0.0.1");
+}
 
 /**
+ * Check if we should use mock data
  * Force mock mode if we detect production with localhost API URL
  * This prevents CORS errors when deployed to Vercel/Netlify
  */
-const SHOULD_USE_MOCK =
-  USE_MOCK_DATA || (IS_PRODUCTION && API_URL.includes("localhost"));
+function shouldUseMockData(): boolean {
+  const isProd = isProductionEnvironment();
+  const hasLocalhostApi = API_URL.includes("localhost");
+  const forceMock = isProd && hasLocalhostApi;
 
-// Log warning if we're forcing mock mode due to localhost detection
-if (SHOULD_USE_MOCK && IS_PRODUCTION && API_URL.includes("localhost")) {
-  console.warn(
-    "[AUTH] Production environment detected with localhost API URL - forcing mock mode to prevent CORS errors"
-  );
-  console.warn("[AUTH] API_URL:", API_URL);
-  console.warn("[AUTH] Hostname:", typeof window !== "undefined" ? window.location.hostname : "SSR");
+  // Log warning if we're forcing mock mode due to localhost detection
+  if (forceMock && typeof window !== "undefined") {
+    console.warn(
+      "[AUTH] Production environment detected with localhost API URL - forcing mock mode to prevent CORS errors"
+    );
+    console.warn("[AUTH] API_URL:", API_URL);
+    console.warn("[AUTH] Hostname:", window.location.hostname);
+    console.warn("[AUTH] USE_MOCK_DATA env:", USE_MOCK_DATA);
+  }
+
+  return USE_MOCK_DATA || forceMock;
 }
 
 // ============================================================================
@@ -143,7 +152,7 @@ export const useAuth = create<AuthState>()(
       // Login action
       login: async (email: string, password: string) => {
         // Mock authentication when in mock data mode
-        if (SHOULD_USE_MOCK) {
+        if (shouldUseMockData()) {
           // Simulate network delay
           await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -199,7 +208,7 @@ export const useAuth = create<AuthState>()(
         });
 
         // Skip API call in mock mode
-        if (SHOULD_USE_MOCK) {
+        if (shouldUseMockData()) {
           return;
         }
 
@@ -239,7 +248,7 @@ export const useAuth = create<AuthState>()(
         }
 
         // In mock mode, operator info is already set and doesn't need refreshing
-        if (SHOULD_USE_MOCK) {
+        if (shouldUseMockData()) {
           if (!operator) {
             throw new Error("Session expired");
           }

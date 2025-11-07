@@ -105,14 +105,14 @@ export default function DebugPage() {
             <div>
               <strong>NEXT_PUBLIC_API_URL:</strong>{" "}
               <span
-                className={
-                  hasLocalhostApi ? "text-red-600" : "text-blue-600"
-                }
+                className={hasLocalhostApi ? "text-red-600" : "text-blue-600"}
               >
                 {process.env.NEXT_PUBLIC_API_URL || "undefined (empty)"}
               </span>
               {hasLocalhostApi && isProduction && (
-                <span className="ml-2 text-red-600">⚠ localhost in production!</span>
+                <span className="ml-2 text-red-600">
+                  ⚠ localhost in production!
+                </span>
               )}
             </div>
             <div>
@@ -137,7 +137,9 @@ export default function DebugPage() {
             </div>
             <div>
               <strong>Environment Type:</strong>{" "}
-              <span className={isProduction ? "text-green-600" : "text-blue-600"}>
+              <span
+                className={isProduction ? "text-green-600" : "text-blue-600"}
+              >
                 {isProduction ? "Production" : "Development"}
               </span>
             </div>

@@ -20,19 +20,31 @@ import { useAlerts } from "./useAlerts";
 const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-// Production Safety Check: Force mock mode if we detect production with localhost
-const IS_PRODUCTION =
-  typeof window !== "undefined" &&
-  !window.location.hostname.includes("localhost") &&
-  !window.location.hostname.includes("127.0.0.1");
+/**
+ * Detect if we're running in a production environment at runtime
+ * Must be a function to work correctly in Next.js SSR
+ */
+function isProductionEnvironment(): boolean {
+  if (typeof window === "undefined") return false;
+  const hostname = window.location.hostname;
+  return !hostname.includes("localhost") && !hostname.includes("127.0.0.1");
+}
 
-const SHOULD_USE_MOCK =
-  USE_MOCK_DATA || (IS_PRODUCTION && API_URL.includes("localhost"));
+/**
+ * Check if we should use mock data (disabling realtime)
+ */
+function shouldUseMockData(): boolean {
+  const isProd = isProductionEnvironment();
+  const hasLocalhostApi = API_URL.includes("localhost");
+  const forceMock = isProd && hasLocalhostApi;
 
-if (SHOULD_USE_MOCK && IS_PRODUCTION && API_URL.includes("localhost")) {
-  console.warn(
-    "[Realtime] Production environment detected with localhost API URL - disabling realtime updates"
-  );
+  if (forceMock && typeof window !== "undefined") {
+    console.warn(
+      "[Realtime] Production environment detected with localhost API URL - disabling realtime updates"
+    );
+  }
+
+  return USE_MOCK_DATA || forceMock;
 }
 
 interface RealtimeEvent {
@@ -55,7 +67,7 @@ export function useRealtimeUpdates() {
 
   useEffect(() => {
     // Skip in mock data mode - no real-time updates needed
-    if (SHOULD_USE_MOCK) {
+    if (shouldUseMockData()) {
       console.log("[Realtime] Skipping SSE in mock data mode");
       return;
     }
