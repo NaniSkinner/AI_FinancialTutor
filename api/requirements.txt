@@ -8,6 +8,9 @@ uvicorn[standard]==0.24.0
 # Data Validation
 pydantic==2.5.0
 
+# Firebase Admin SDK (for Firestore database)
+firebase-admin>=6.2.0
+
 # Authentication
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4

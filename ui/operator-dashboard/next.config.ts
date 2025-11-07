@@ -22,10 +22,10 @@ const nextConfig: NextConfig = {
   compress: true,
 
   // Environment variables validation
+  // Note: Empty string for API_URL forces mock mode in production (safer default)
   env: {
     NEXT_PUBLIC_USE_MOCK_DATA: process.env.NEXT_PUBLIC_USE_MOCK_DATA || "true",
-    NEXT_PUBLIC_API_URL:
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "",
     NEXT_PUBLIC_OPERATOR_ID: process.env.NEXT_PUBLIC_OPERATOR_ID || "op_001",
   },
 };

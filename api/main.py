@@ -137,8 +137,17 @@ app = FastAPI(
 # ========================================================================
 
 # Get CORS origins from environment (comma-separated)
+# Production: Include Vercel URLs
+# Development: Include localhost
 cors_origins_env = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:3001")
 cors_origins = [origin.strip() for origin in cors_origins_env.split(",")]
+
+# Add wildcard for Vercel preview deployments if in production
+if os.getenv("ENVIRONMENT", "development") == "production":
+    vercel_domain = os.getenv("VERCEL_DOMAIN")
+    if vercel_domain:
+        cors_origins.append(f"https://{vercel_domain}")
+        cors_origins.append(f"https://*.{vercel_domain}")
 
 app.add_middleware(
     CORSMiddleware,

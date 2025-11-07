@@ -1,0 +1,87 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // =========================================================================
+    // DEVELOPMENT RULES (Permissive - Replace in Production)
+    // =========================================================================
+    // ⚠️ WARNING: These rules allow all access for development
+    // ⚠️ MUST be replaced with production rules in Phase 6
+    // =========================================================================
+    
+    // Allow all reads and writes during development
+    match /{document=**} {
+      allow read, write: if true;
+    }
+    
+    // =========================================================================
+    // PRODUCTION RULES (Uncomment and deploy in Phase 6)
+    // =========================================================================
+    /*
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOperator() {
+      return isAuthenticated() && 
+             request.auth.token.role == 'operator';
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+             request.auth.token.role == 'admin';
+    }
+    
+    // Users collection - users can only read their own data
+    match /users/{userId} {
+      allow read: if isAuthenticated() && 
+                     (request.auth.uid == userId || isOperator());
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Recommendations - operators can read/write all, users can read their own
+    match /recommendations/{recommendationId} {
+      allow read: if isAuthenticated() && 
+                     (resource.data.user_id == request.auth.uid || isOperator());
+      allow create: if isOperator() || isAdmin();
+      allow update: if isOperator() || isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // User signals - operators read all, users read their own
+    match /user_signals/{userId} {
+      allow read: if isAuthenticated() && 
+                     (userId == request.auth.uid || isOperator());
+      allow write: if isOperator() || isAdmin();
+    }
+    
+    // Persona history - same as user signals
+    match /persona_history/{userId} {
+      allow read: if isAuthenticated() && 
+                     (userId == request.auth.uid || isOperator());
+      allow write: if isOperator() || isAdmin();
+    }
+    
+    // Audit logs - operators and admins only
+    match /audit_logs/{logId} {
+      allow read: if isOperator() || isAdmin();
+      allow create: if isOperator() || isAdmin();
+      allow update, delete: if false; // Audit logs are immutable
+    }
+    
+    // Operator notes - operators only
+    match /operator_notes/{noteId} {
+      allow read, write: if isOperator() || isAdmin();
+    }
+    
+    // Tags - operators only
+    match /tags/{tagId} {
+      allow read, write: if isOperator() || isAdmin();
+    }
+    
+    */
+  }
+}
+

@@ -20,6 +20,21 @@ import { useAlerts } from "./useAlerts";
 const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+// Production Safety Check: Force mock mode if we detect production with localhost
+const IS_PRODUCTION =
+  typeof window !== "undefined" &&
+  !window.location.hostname.includes("localhost") &&
+  !window.location.hostname.includes("127.0.0.1");
+
+const SHOULD_USE_MOCK =
+  USE_MOCK_DATA || (IS_PRODUCTION && API_URL.includes("localhost"));
+
+if (SHOULD_USE_MOCK && IS_PRODUCTION && API_URL.includes("localhost")) {
+  console.warn(
+    "[Realtime] Production environment detected with localhost API URL - disabling realtime updates"
+  );
+}
+
 interface RealtimeEvent {
   type: string;
   data: Record<string, unknown>;
@@ -40,7 +55,7 @@ export function useRealtimeUpdates() {
 
   useEffect(() => {
     // Skip in mock data mode - no real-time updates needed
-    if (USE_MOCK_DATA) {
+    if (SHOULD_USE_MOCK) {
       console.log("[Realtime] Skipping SSE in mock data mode");
       return;
     }
