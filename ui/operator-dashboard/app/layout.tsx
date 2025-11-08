@@ -4,6 +4,7 @@ import { ToastProvider } from "@/components/Common/Toast";
 import { ThemeProvider } from "@/components/Common/ThemeProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthGuard } from "@/components/Auth/AuthGuard";
+import { Footer } from "@/components/Common/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -46,12 +47,15 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <ThemeProvider>
           <ErrorBoundary>
             <AuthGuard>
-              <ToastProvider>{children}</ToastProvider>
+              <ToastProvider>
+                <div className="flex-1">{children}</div>
+                <Footer />
+              </ToastProvider>
             </AuthGuard>
           </ErrorBoundary>
         </ThemeProvider>
