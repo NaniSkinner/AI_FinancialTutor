@@ -21,13 +21,9 @@ const nextConfig: NextConfig = {
   // Compression
   compress: true,
 
-  // Environment variables validation
-  // Note: Empty string for API_URL forces mock mode in production (safer default)
-  env: {
-    NEXT_PUBLIC_USE_MOCK_DATA: process.env.NEXT_PUBLIC_USE_MOCK_DATA || "true",
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "",
-    NEXT_PUBLIC_OPERATOR_ID: process.env.NEXT_PUBLIC_OPERATOR_ID || "op_001",
-  },
+  // Environment variables are automatically available via NEXT_PUBLIC_* prefix
+  // Vercel injects them directly - no need for explicit env section
+  // This prevents build-time hardcoding issues
 };
 
 export default nextConfig;
