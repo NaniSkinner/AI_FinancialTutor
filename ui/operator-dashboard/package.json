@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "echo '🔍 BUILD-TIME ENV CHECK:' && echo 'NEXT_PUBLIC_API_URL=' && echo \"$NEXT_PUBLIC_API_URL\" && echo 'NEXT_PUBLIC_USE_MOCK_DATA=' && echo \"$NEXT_PUBLIC_USE_MOCK_DATA\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
