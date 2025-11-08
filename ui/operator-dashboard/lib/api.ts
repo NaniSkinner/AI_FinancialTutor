@@ -22,7 +22,9 @@ import {
 } from "./mockData";
 import { getAuthToken, useAuth } from "./auth";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// CRITICAL: No localhost fallback to prevent hardcoding localhost in production build
+// Empty string forces mock mode when no API URL is configured
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 // Set to true to use mock data instead of real API calls
 const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
@@ -44,22 +46,31 @@ function isProductionEnvironment(): boolean {
 
 /**
  * Check if we should use mock data
- * Force mock mode if we detect production with localhost API URL
+ * Force mock mode if:
+ * 1. USE_MOCK_DATA is explicitly true
+ * 2. API_URL is empty (no backend configured)
+ * 3. Production environment with localhost API URL
  * This prevents CORS errors when deployed to Vercel/Netlify
  */
 function shouldUseMockData(): boolean {
   const isProd = isProductionEnvironment();
   const hasLocalhostApi = API_URL.includes("localhost");
-  const forceMock = isProd && hasLocalhostApi;
+  const hasEmptyApi = !API_URL || API_URL.trim() === "";
+  const forceMock = isProd && (hasLocalhostApi || hasEmptyApi);
 
-  // Log warning if we're forcing mock mode due to localhost detection
-  if (forceMock && typeof window !== "undefined") {
-    console.warn(
-      "[API] Production environment detected with localhost API URL - forcing mock mode to prevent CORS errors"
-    );
-    console.warn("[API] API_URL:", API_URL);
-    console.warn("[API] Hostname:", window.location.hostname);
-    console.warn("[API] USE_MOCK_DATA env:", USE_MOCK_DATA);
+  // Log helpful debugging info
+  if (typeof window !== "undefined") {
+    if (USE_MOCK_DATA) {
+      console.log(
+        "[API] Mock mode: Enabled via NEXT_PUBLIC_USE_MOCK_DATA=true"
+      );
+    } else if (forceMock) {
+      console.warn(
+        "[API] Mock mode: FORCED - Production environment without valid API URL"
+      );
+      console.warn("[API] API_URL:", API_URL || "(empty)");
+      console.warn("[API] Hostname:", window.location.hostname);
+    }
   }
 
   return USE_MOCK_DATA || forceMock;

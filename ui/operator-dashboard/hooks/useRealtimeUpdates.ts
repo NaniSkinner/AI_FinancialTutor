@@ -18,7 +18,8 @@ import { useOperatorStats } from "./useOperatorStats";
 import { useAlerts } from "./useAlerts";
 
 const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// CRITICAL: No localhost fallback to prevent hardcoding localhost in production build
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 /**
  * Detect if we're running in a production environment at runtime
@@ -32,16 +33,24 @@ function isProductionEnvironment(): boolean {
 
 /**
  * Check if we should use mock data (disabling realtime)
+ * Force mock mode if API_URL is empty or localhost
  */
 function shouldUseMockData(): boolean {
   const isProd = isProductionEnvironment();
   const hasLocalhostApi = API_URL.includes("localhost");
-  const forceMock = isProd && hasLocalhostApi;
+  const hasEmptyApi = !API_URL || API_URL.trim() === "";
+  const forceMock = isProd && (hasLocalhostApi || hasEmptyApi);
 
-  if (forceMock && typeof window !== "undefined") {
-    console.warn(
-      "[Realtime] Production environment detected with localhost API URL - disabling realtime updates"
-    );
+  if (typeof window !== "undefined") {
+    if (USE_MOCK_DATA) {
+      console.log(
+        "[Realtime] Mock mode: Realtime updates disabled (USE_MOCK_DATA=true)"
+      );
+    } else if (forceMock) {
+      console.warn(
+        "[Realtime] Mock mode: FORCED - No valid API URL for realtime connection"
+      );
+    }
   }
 
   return USE_MOCK_DATA || forceMock;
