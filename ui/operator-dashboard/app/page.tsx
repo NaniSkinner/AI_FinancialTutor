@@ -166,8 +166,19 @@ export default function OperatorDashboard() {
                         </p>
                       </div>
                       <button
+                        onClick={() => {
+                          setShowLogoutMenu(false);
+                          router.push("/dashboard");
+                        }}
+                        className="w-full text-left px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center gap-3 rounded-lg mx-1 mt-1"
+                      >
+                        <Users className="w-4 h-4" />
+                        User Dashboard
+                      </button>
+                      <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
+                      <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-3 rounded-lg mx-1 mt-1"
+                        className="w-full text-left px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-3 rounded-lg mx-1"
                       >
                         <LogOut className="w-4 h-4" />
                         Log out
