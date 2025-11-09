@@ -140,6 +140,7 @@ export default function ProgressPage() {
               userId={userId}
               persona={persona}
               signals={dashboardData.signals.signals}
+              gamification={gamification}
             />
           </motion.div>
           <motion.div

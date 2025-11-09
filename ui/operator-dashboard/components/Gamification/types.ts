@@ -1,7 +1,7 @@
 // Type Definitions for Gamification System
 // All interfaces for progress tracking, challenges, and achievements
 
-import type { UserSignals } from "@/lib/types";
+import type { UserSignals, GamificationData } from "@/lib/types";
 
 // ============================================================================
 // PROGRESS TRACKING TYPES
@@ -96,6 +96,7 @@ export interface ProgressTrackerProps {
   userId: string;
   persona: string;
   signals?: UserSignals["signals"];
+  gamification?: GamificationData | null;
 }
 
 export interface SavingsChallengeProps {

@@ -25,13 +25,21 @@ export function ProgressTracker({
   userId,
   persona,
   signals,
+  gamification,
 }: ProgressTrackerProps) {
   const [progress, setProgress] = useState<GamificationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch user progress data
+    // If gamification data is provided as prop, use it directly
+    if (gamification !== undefined) {
+      setProgress(gamification);
+      setLoading(false);
+      return;
+    }
+
+    // Otherwise fetch user progress data
     const fetchProgress = async () => {
       try {
         setLoading(true);
@@ -53,7 +61,7 @@ export function ProgressTracker({
     };
 
     fetchProgress();
-  }, [userId]);
+  }, [userId, gamification]);
 
   // Loading state
   if (loading) {

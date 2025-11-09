@@ -685,7 +685,7 @@ export function getMockDashboardData(userId: string): DashboardResponse {
     progress: {
       completedCount: 2,
       totalCount: 5,
-      streak: 3,
+      streak: 7,
     },
     gamification: {
       streak: 7,
