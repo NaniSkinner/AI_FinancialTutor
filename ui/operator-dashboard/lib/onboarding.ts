@@ -26,7 +26,6 @@ export async function completeOnboarding(userId: string): Promise<void> {
       JSON.stringify(metadata)
     );
   } catch (error) {
-    console.error("Failed to mark onboarding as complete:", error);
     throw new Error("Failed to complete onboarding");
   }
 }
@@ -51,7 +50,6 @@ export async function dismissOnboarding(userId: string): Promise<void> {
       JSON.stringify(metadata)
     );
   } catch (error) {
-    console.error("Failed to dismiss onboarding:", error);
     throw new Error("Failed to dismiss onboarding");
   }
 }
@@ -70,35 +68,29 @@ export async function isOnboardingComplete(userId: string): Promise<boolean> {
     const metadata: OnboardingMetadata = JSON.parse(stored);
     return metadata.completed === true;
   } catch (error) {
-    console.error("Failed to check onboarding status:", error);
     return false;
   }
 }
 
 /**
  * Check if onboarding should be shown
- * (Not completed AND not recently dismissed)
  */
 export async function shouldShowOnboarding(userId: string): Promise<boolean> {
   try {
     const metadata = await getOnboardingMetadata(userId);
 
-    // Never shown before - show it
     if (!metadata) {
       return true;
     }
 
-    // Already completed - don't show
     if (metadata.completed) {
       return false;
     }
 
-    // Dismissed too many times - don't show (respects user choice)
     if (metadata.dismissCount && metadata.dismissCount >= 3) {
       return false;
     }
 
-    // Dismissed recently (within 7 days) - don't show yet
     if (metadata.dismissedAt) {
       const dismissedDate = new Date(metadata.dismissedAt);
       const daysSinceDismissed =
@@ -109,10 +101,8 @@ export async function shouldShowOnboarding(userId: string): Promise<boolean> {
       }
     }
 
-    // Show onboarding
     return true;
   } catch (error) {
-    console.error("Failed to check if onboarding should show:", error);
     return false;
   }
 }
@@ -132,20 +122,19 @@ export async function getOnboardingMetadata(
 
     return JSON.parse(stored);
   } catch (error) {
-    console.error("Failed to load onboarding metadata:", error);
     return null;
   }
 }
 
 /**
- * Reset onboarding state (for testing/debugging)
+ * Reset onboarding state
  */
 export function resetOnboarding(userId: string): void {
   localStorage.removeItem(`${STORAGE_KEY_PREFIX}_${userId}`);
 }
 
 /**
- * Get a random mock persona for onboarding completion screen
+ * Get a random mock persona
  */
 export function getRandomMockPersona(): string {
   const personas = [

@@ -125,15 +125,15 @@ export function ProgressTracker({
 
       <CardContent className="space-y-6">
         {/* Streak Counter */}
-        <div className="text-center p-6 bg-orange-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-lg border-2 border-orange-200 dark:border-orange-800">
-          <div className="text-6xl font-bold mb-2 text-orange-600 dark:text-orange-400">
+        <div className="text-center p-6 bg-gray-800 rounded-lg border-2 border-gray-700">
+          <div className="text-6xl font-bold mb-2 text-indigo-400">
             {streak}
           </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center justify-center gap-1">
-            <Flame className="h-4 w-4 text-orange-500 dark:text-orange-400" />
+          <div className="text-sm text-gray-400 flex items-center justify-center gap-1">
+            <Flame className="h-4 w-4 text-indigo-400" />
             day streak
           </div>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+          <p className="text-xs text-gray-400 mt-2">
             Keep learning to maintain your streak!
           </p>
         </div>

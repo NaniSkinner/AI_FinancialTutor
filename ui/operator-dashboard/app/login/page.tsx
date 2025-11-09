@@ -21,13 +21,11 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Force light mode on login page
   useEffect(() => {
     document.documentElement.classList.remove("dark");
     document.documentElement.classList.add("light");
   }, []);
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated()) {
       router.push("/");
@@ -41,7 +39,6 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      // Redirect to dashboard on success
       router.push("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");

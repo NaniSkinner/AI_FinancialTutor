@@ -20,19 +20,6 @@ import { persist, createJSONStorage } from "zustand/middleware";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 
-/**
- * ALTERNATIVE SOLUTIONS (if this doesn't work):
- *
- * Option 2: Set NEXT_PUBLIC_API_URL in Vercel environment variables
- *   - Go to Vercel Dashboard > Settings > Environment Variables
- *   - Add: NEXT_PUBLIC_API_URL = "" (empty string) or your real API URL
- *   - Redeploy with clean cache
- *
- * Option 3: Simplify to only check USE_MOCK_DATA
- *   - Remove all API_URL checks
- *   - Only use USE_MOCK_DATA flag
- *   - Set NEXT_PUBLIC_USE_MOCK_DATA=true in Vercel
- */
 
 // ============================================================================
 // Production Safety Checks
@@ -55,28 +42,12 @@ function isProductionEnvironment(): boolean {
  * 1. USE_MOCK_DATA is explicitly true
  * 2. API_URL is empty (no backend configured)
  * 3. Production environment with localhost API URL
- * This prevents CORS errors when deployed to Vercel/Netlify
  */
 function shouldUseMockData(): boolean {
   const isProd = isProductionEnvironment();
   const hasLocalhostApi = API_URL.includes("localhost");
   const hasEmptyApi = !API_URL || API_URL.trim() === "";
   const forceMock = isProd && (hasLocalhostApi || hasEmptyApi);
-
-  // Log helpful debugging info
-  if (typeof window !== "undefined") {
-    if (USE_MOCK_DATA) {
-      console.log(
-        "[AUTH] Mock mode: Enabled via NEXT_PUBLIC_USE_MOCK_DATA=true"
-      );
-    } else if (forceMock) {
-      console.warn(
-        "[AUTH] Mock mode: FORCED - Production environment without valid API URL"
-      );
-      console.warn("[AUTH] API_URL:", API_URL || "(empty)");
-      console.warn("[AUTH] Hostname:", window.location.hostname);
-    }
-  }
 
   return USE_MOCK_DATA || forceMock;
 }
@@ -227,13 +198,13 @@ export const useAuth = create<AuthState>()(
 
       // Logout action
       logout: () => {
-        // Clear user consents when logging out (requires re-authorization on next login)
+        // Clear user consents when logging out
         if (typeof window !== "undefined") {
-          const userId = "user_demo_001"; // In production, get from auth context
+          const userId = "user_demo_001";
           try {
             localStorage.removeItem(`spendsense_consents_${userId}`);
           } catch (error) {
-            console.error("Failed to clear consents on logout:", error);
+            // Ignore consent clear errors
           }
         }
 
@@ -247,7 +218,7 @@ export const useAuth = create<AuthState>()(
           return;
         }
 
-        // Optional: Call logout endpoint (for logging purposes)
+        // Optional: Call logout endpoint
         try {
           fetch(`${API_URL}/api/auth/logout`, {
             method: "POST",
@@ -256,8 +227,7 @@ export const useAuth = create<AuthState>()(
             },
           });
         } catch (error) {
-          // Ignore errors on logout
-          console.error("Logout API error:", error);
+          // Ignore logout errors silently
         }
       },
 

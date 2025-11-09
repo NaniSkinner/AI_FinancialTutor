@@ -50,28 +50,12 @@ function isProductionEnvironment(): boolean {
  * 1. USE_MOCK_DATA is explicitly true
  * 2. API_URL is empty (no backend configured)
  * 3. Production environment with localhost API URL
- * This prevents CORS errors when deployed to Vercel/Netlify
  */
 function shouldUseMockData(): boolean {
   const isProd = isProductionEnvironment();
   const hasLocalhostApi = API_URL.includes("localhost");
   const hasEmptyApi = !API_URL || API_URL.trim() === "";
   const forceMock = isProd && (hasLocalhostApi || hasEmptyApi);
-
-  // Log helpful debugging info
-  if (typeof window !== "undefined") {
-    if (USE_MOCK_DATA) {
-      console.log(
-        "[API] Mock mode: Enabled via NEXT_PUBLIC_USE_MOCK_DATA=true"
-      );
-    } else if (forceMock) {
-      console.warn(
-        "[API] Mock mode: FORCED - Production environment without valid API URL"
-      );
-      console.warn("[API] API_URL:", API_URL || "(empty)");
-      console.warn("[API] Hostname:", window.location.hostname);
-    }
-  }
 
   return USE_MOCK_DATA || forceMock;
 }
@@ -937,7 +921,6 @@ export async function getUserDashboard(
 
     return response.json();
   } catch (error) {
-    console.error("Dashboard fetch error:", error);
     // Fallback to mock data on error
     return getMockDashboardData(userId);
   }
@@ -949,8 +932,6 @@ export async function getUserDashboard(
 export async function recordRecommendationView(
   recommendationId: string
 ): Promise<void> {
-  console.log("Recording view for:", recommendationId);
-
   if (shouldUseMockData()) {
     return Promise.resolve();
   }
@@ -963,7 +944,7 @@ export async function recordRecommendationView(
       },
     });
   } catch (error) {
-    console.error("Failed to record view:", error);
+    // Silently fail
   }
 }
 
@@ -974,10 +955,7 @@ export async function markRecommendationComplete(
   recommendationId: string,
   userId: string
 ): Promise<void> {
-  console.log("Marking complete:", recommendationId, "for user:", userId);
-
   if (shouldUseMockData()) {
-    // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500));
     return Promise.resolve();
   }
@@ -991,7 +969,6 @@ export async function markRecommendationComplete(
       body: JSON.stringify({ userId }),
     });
   } catch (error) {
-    console.error("Failed to mark complete:", error);
     throw error;
   }
 }
