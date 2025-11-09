@@ -10,7 +10,7 @@ import { ProgressWidget } from "@/components/USER/ProgressWidget";
 import { ChatWidget } from "@/components/ChatWidget";
 import { TransitionCelebration } from "@/components/Gamification/TransitionCelebration";
 import { OnboardingModal } from "@/components/Onboarding";
-import { ConsentGuard } from "@/components/Consent";
+import { ConsentGuard, ConsentRedirectGuard } from "@/components/Consent";
 import { getUserDashboard } from "@/lib/api";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import type { DashboardResponse } from "@/lib/types";
@@ -91,16 +91,17 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-background transition-colors">
-      {/* Skip to Content Link for Accessibility */}
-      <a href="#main-content" className="skip-to-content">
-        Skip to main content
-      </a>
+    <ConsentRedirectGuard>
+      <div className="min-h-screen bg-gray-50 dark:bg-background transition-colors">
+        {/* Skip to Content Link for Accessibility */}
+        <a href="#main-content" className="skip-to-content">
+          Skip to main content
+        </a>
 
-      <DashboardHeader
-        userName={dashboardData.user.name}
-        avatarUrl={dashboardData.user.avatarUrl}
-      />
+        <DashboardHeader
+          userName={dashboardData.user.name}
+          avatarUrl={dashboardData.user.avatarUrl}
+        />
 
       <main
         id="main-content"
@@ -177,12 +178,13 @@ export default function DashboardPage() {
         />
       </ConsentGuard>
 
-      {/* Onboarding Modal */}
-      <OnboardingModal
-        isOpen={showOnboarding}
-        onClose={handleOnboardingClose}
-        onComplete={handleOnboardingComplete}
-      />
-    </div>
+        {/* Onboarding Modal */}
+        <OnboardingModal
+          isOpen={showOnboarding}
+          onClose={handleOnboardingClose}
+          onComplete={handleOnboardingComplete}
+        />
+      </div>
+    </ConsentRedirectGuard>
   );
 }

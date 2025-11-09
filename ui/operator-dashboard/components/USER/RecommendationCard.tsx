@@ -276,7 +276,7 @@ You're already making great progress. Keep going!`,
                 <button
                   onClick={handleComplete}
                   disabled={loading}
-                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-500 dark:to-blue-500 text-white rounded-xl hover:from-indigo-700 hover:to-blue-700 dark:hover:from-indigo-600 dark:hover:to-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+                  className="flex items-center gap-2 px-5 py-3 bg-indigo-600 dark:from-indigo-500 dark:to-blue-500 text-white rounded-xl hover:from-indigo-700 hover:to-blue-700 dark:hover:from-indigo-600 dark:hover:to-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
                 >
                   <Check className="h-4 w-4" />
                   {loading ? "Saving..." : "Mark as Complete"}

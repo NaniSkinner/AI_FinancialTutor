@@ -17,6 +17,7 @@ import { UserExplorer } from "@/components/UserExplorer";
 import { KeyboardShortcutsLegend } from "@/components/KeyboardShortcutsLegend";
 import { ChatWidget } from "@/components/ChatWidget";
 import { ThemeToggle } from "@/components/Common/ThemeToggle";
+import { LogoCompact } from "@/components/Common/Logo";
 import { useAuth } from "@/lib/auth";
 import { usePerformanceMonitoring } from "@/hooks/usePerformanceMonitoring";
 import { useRealtimeUpdates } from "@/hooks/useRealtimeUpdates";
@@ -60,14 +61,12 @@ export default function OperatorDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 bg-gradient-to-br from-indigo-600 to-blue-600 dark:from-indigo-500 dark:to-blue-500 rounded-lg flex items-center justify-center shadow-md">
-                  <span className="text-white font-bold text-lg">$</span>
-                </div>
+              <div className="flex items-center gap-3">
+                <LogoCompact />
                 <div className="flex items-center gap-2">
-                  <h1 className="text-base font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">
-                    SpendSense Operator
-                  </h1>
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                    Operator
+                  </span>
                   {useMockData && (
                     <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full whitespace-nowrap">
                       Mock Data
@@ -135,7 +134,7 @@ export default function OperatorDashboard() {
                   onClick={() => setShowLogoutMenu(!showLogoutMenu)}
                   className="flex items-center gap-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl px-3 py-2 transition-all duration-200"
                 >
-                  <div className="w-9 h-9 bg-gradient-to-br from-indigo-600 to-blue-600 dark:from-indigo-500 dark:to-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium shadow-md ring-2 ring-gray-200 dark:ring-gray-700">
+                  <div className="w-9 h-9 bg-indigo-600 dark:from-indigo-500 dark:to-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium shadow-md ring-2 ring-gray-200 dark:ring-gray-700">
                     {operator ? getInitials(operator.name) : "OP"}
                   </div>
                   <div className="text-left hidden sm:block">

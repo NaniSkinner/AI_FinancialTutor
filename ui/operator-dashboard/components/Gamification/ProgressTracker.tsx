@@ -125,7 +125,7 @@ export function ProgressTracker({
 
       <CardContent className="space-y-6">
         {/* Streak Counter */}
-        <div className="text-center p-6 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/30 dark:to-red-900/30 rounded-lg border-2 border-orange-200 dark:border-orange-800">
+        <div className="text-center p-6 bg-orange-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-lg border-2 border-orange-200 dark:border-orange-800">
           <div className="text-6xl font-bold mb-2 text-orange-600 dark:text-orange-400">
             {streak}
           </div>

@@ -42,7 +42,7 @@ export function ProgressWidget({ gamification }: ProgressWidgetProps) {
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg">
+            <div className="p-2.5 rounded-xl bg-orange-500 shadow-lg">
               <Trophy className="h-5 w-5 text-white" />
             </div>
             <span className="text-gray-900 dark:text-gray-100">

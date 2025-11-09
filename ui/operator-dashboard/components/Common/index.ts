@@ -9,6 +9,7 @@ export { ThemeProvider } from "./ThemeProvider";
 export { ThemeToggle } from "./ThemeToggle";
 export { ToastProvider, useToast } from "./Toast";
 export { Badge } from "./Badge";
+export { Logo, LogoCompact } from "./Logo";
 
 // New UI components for Calculators
 export {

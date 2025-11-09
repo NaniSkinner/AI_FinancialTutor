@@ -227,6 +227,16 @@ export const useAuth = create<AuthState>()(
 
       // Logout action
       logout: () => {
+        // Clear user consents when logging out (requires re-authorization on next login)
+        if (typeof window !== "undefined") {
+          const userId = "user_demo_001"; // In production, get from auth context
+          try {
+            localStorage.removeItem(`spendsense_consents_${userId}`);
+          } catch (error) {
+            console.error("Failed to clear consents on logout:", error);
+          }
+        }
+
         set({
           token: null,
           operator: null,

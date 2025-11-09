@@ -38,7 +38,7 @@ export function FinancialSnapshot({ signals }: FinancialSnapshotProps) {
       case "warning":
         return "text-yellow-600";
       case "danger":
-        return "text-red-600";
+        return "text-indigo-600";
       default:
         return "text-gray-600";
     }

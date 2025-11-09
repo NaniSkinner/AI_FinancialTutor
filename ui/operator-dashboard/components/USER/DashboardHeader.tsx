@@ -12,6 +12,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/Common/ThemeToggle";
+import { Logo } from "@/components/Common/Logo";
 import { getInitials } from "@/lib/utils";
 
 interface DashboardHeaderProps {
@@ -30,19 +31,10 @@ export function DashboardHeader({ userName, avatarUrl }: DashboardHeaderProps) {
         <div className="flex justify-between items-center h-20">
           {/* Logo and Title */}
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-blue-600 dark:from-indigo-500 dark:to-blue-500 rounded-xl flex items-center justify-center shadow-md">
-                <span className="text-white font-bold text-xl">$</span>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                  SpendSense
-                </h1>
-                <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:inline">
-                  Your Financial Learning Hub
-                </span>
-              </div>
-            </div>
+            <Logo size="medium" showTagline={false} variant="dark" />
+            <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:inline px-2 py-1 rounded-md bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+              Your Financial Learning Hub
+            </span>
           </div>
 
           {/* Right Side Actions */}
@@ -94,7 +86,7 @@ export function DashboardHeader({ userName, avatarUrl }: DashboardHeaderProps) {
                     className="w-9 h-9 rounded-full ring-2 ring-gray-200 dark:ring-gray-700"
                   />
                 ) : (
-                  <div className="w-9 h-9 bg-gradient-to-br from-indigo-600 to-blue-600 dark:from-indigo-500 dark:to-blue-500 text-white rounded-full flex items-center justify-center text-sm font-medium shadow-md">
+                  <div className="w-9 h-9 bg-indigo-600 dark:from-indigo-500 dark:to-blue-500 text-white rounded-full flex items-center justify-center text-sm font-medium shadow-md">
                     {getInitials(userName)}
                   </div>
                 )}

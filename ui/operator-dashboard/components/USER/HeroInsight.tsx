@@ -21,9 +21,9 @@ export function HeroInsight({ persona, signals }: HeroInsightProps) {
       title: "Your Credit Utilization Needs Attention",
       description: `Your credit cards are at ${signals.signals.credit?.aggregate_utilization_pct || 0}% utilization. Bringing this below 30% could improve your credit score.`,
       gradient:
-        "from-red-500 to-orange-500 dark:from-red-400 dark:to-orange-400",
+        "bg-indigo-600",
       bgGradient:
-        "from-red-50 to-orange-50 dark:from-red-950/30 dark:to-orange-950/30",
+        "bg-gray-800",
       ctaText: "Learn About Credit Health",
       ctaLink: "/learn/credit-utilization",
     },

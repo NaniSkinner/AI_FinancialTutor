@@ -1,8 +1,10 @@
-# SpendSense - Data Foundation
+# SpendSense
+
+## Your Financial Learning Hub
 
 **Version 1.0** | **November 4, 2025**
 
-A synthetic financial data generator that creates realistic user profiles, bank accounts, and transaction histories following Plaid's schema conventions. Built for testing and development of financial applications.
+A comprehensive financial education platform combining synthetic data generation with AI-powered insights and recommendations. SpendSense provides realistic user profiles, bank accounts, and transaction histories following Plaid's schema conventions, enabling intelligent financial guidance and operator oversight.
 
 ---
 
@@ -692,6 +694,18 @@ MIT License - see LICENSE file for details
 - [Project Architecture](Docs/Architecture.md)
 - [Product Requirements](Docs/PRD1.md)
 - [Implementation Tasks](Docs/Tasks1.md)
+
+---
+
+## Credits
+
+This is a **Gauntlet** project made with 🍵 by **Nani Skinner**
+
+**Connect with Nani:**
+
+- [LinkedIn](https://www.linkedin.com/in/nani-skinner-7b6b17324/)
+- [Twitter/X](https://x.com/NaniSkinner)
+- [Portfolio](https://www.naniskinner.com/)
 
 ---
 

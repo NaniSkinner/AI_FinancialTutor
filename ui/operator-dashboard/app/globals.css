@@ -6,28 +6,28 @@
 :root {
   /* Light Mode - Origin Inspired */
   /* Base colors */
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
 
   /* Card colors */
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
+  --card: 0 0% 10%;
+  --card-foreground: 0 0% 100%;
 
   /* Popover colors */
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 10%;
+  --popover-foreground: 0 0% 100%;
 
   /* Primary colors - Soft Indigo */
   --primary: 238 70% 60%;
   --primary-foreground: 0 0% 100%;
 
   /* Secondary colors */
-  --secondary: 220 14% 96%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 0 0% 20%;
+  --secondary-foreground: 0 0% 90%;
 
   /* Muted colors */
-  --muted: 220 14% 96%;
-  --muted-foreground: 215.4 16.3% 46.9%;
+  --muted: 0 0% 20%;
+  --muted-foreground: 0 0% 60%;
 
   /* Accent colors */
   --accent: 238 70% 60%;
@@ -46,8 +46,8 @@
   --destructive-foreground: 0 0% 100%;
 
   /* Border and input colors */
-  --border: 220 13% 91%;
-  --input: 220 13% 91%;
+  --border: 0 0% 20%;
+  --input: 0 0% 20%;
   --ring: 238 70% 60%;
 
   /* Border radius - Larger for Origin style */
@@ -55,50 +55,50 @@
 }
 
 .dark {
-  /* Dark Mode - Origin Inspired */
-  /* Base colors - Deep Navy */
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
+  /* Dark Mode - Pure Black */
+  /* Base colors */
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
 
-  /* Card colors - Lighter Navy */
-  --card: 217.2 32.6% 17.5%;
-  --card-foreground: 210 40% 98%;
+  /* Card colors */
+  --card: 0 0% 10%;
+  --card-foreground: 0 0% 100%;
 
   /* Popover colors */
-  --popover: 217.2 32.6% 17.5%;
-  --popover-foreground: 210 40% 98%;
+  --popover: 0 0% 10%;
+  --popover-foreground: 0 0% 100%;
 
   /* Primary colors - Bright Blue */
   --primary: 217 91% 60%;
   --primary-foreground: 222.2 84% 4.9%;
 
   /* Secondary colors */
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
+  --secondary: 0 0% 20%;
+  --secondary-foreground: 0 0% 90%;
 
   /* Muted colors */
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
+  --muted: 0 0% 20%;
+  --muted-foreground: 0 0% 60%;
 
   /* Accent colors */
   --accent: 217 91% 60%;
-  --accent-foreground: 222.2 84% 4.9%;
+  --accent-foreground: 0 0% 0%;
 
   /* Success colors - Bright Mint */
   --success: 158 64% 52%;
-  --success-foreground: 222.2 84% 4.9%;
+  --success-foreground: 0 0% 0%;
 
   /* Warning colors - Bright Amber */
   --warning: 38 92% 50%;
-  --warning-foreground: 222.2 84% 4.9%;
+  --warning-foreground: 0 0% 0%;
 
   /* Destructive colors */
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 100%;
 
   /* Border and input colors */
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
+  --border: 0 0% 20%;
+  --input: 0 0% 20%;
   --ring: 217 91% 60%;
 }
 
