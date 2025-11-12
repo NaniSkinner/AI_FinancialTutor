@@ -43,11 +43,16 @@ env/
 data/
 *.csv
 *.db
+*.db-*
 *.sqlite
 *.sqlite3
+spendsense.db*
+*.backup
 
 # Logs
 *.log
+api/*.log
+logs/
 
 # Testing
 .pytest_cache/
@@ -62,6 +67,9 @@ htmlcov/
 # Environment variables
 .env
 .env.local
+.env.production
+api/.env
+api/.env.*
 
 # macOS
 .DS_Store

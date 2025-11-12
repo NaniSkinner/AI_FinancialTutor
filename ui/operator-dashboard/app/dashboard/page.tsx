@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DashboardHeader } from "@/components/USER/DashboardHeader";
-import { HeroInsight } from "@/components/USER/HeroInsight";
-import { FinancialSnapshot } from "@/components/USER/FinancialSnapshot";
-import { RecommendationsFeed } from "@/components/USER/RecommendationsFeed";
-import { QuickTools } from "@/components/USER/QuickTools";
-import { ProgressWidget } from "@/components/USER/ProgressWidget";
+import { DashboardHeader } from "@/components/User/DashboardHeader";
+import { HeroInsight } from "@/components/User/HeroInsight";
+import { FinancialSnapshot } from "@/components/User/FinancialSnapshot";
+import { RecommendationsFeed } from "@/components/User/RecommendationsFeed";
+import { QuickTools } from "@/components/User/QuickTools";
+import { ProgressWidget } from "@/components/User/ProgressWidget";
 import { ChatWidget } from "@/components/ChatWidget";
 import { TransitionCelebration } from "@/components/Gamification/TransitionCelebration";
 import { OnboardingModal } from "@/components/Onboarding";

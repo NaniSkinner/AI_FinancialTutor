@@ -20,6 +20,19 @@ A comprehensive financial education platform combining synthetic data generation
 - [Testing](#testing)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
+- [Documentation](#documentation)
+
+---
+
+## 📚 Documentation
+
+Comprehensive documentation is available in the [Docs/](Docs/) directory:
+
+- **[Documentation Hub](Docs/README.md)** - Complete documentation index
+- **[Setup Guide](Docs/setup/README.md)** - Development environment setup
+- **[Architecture](Docs/Architecture.md)** - System architecture overview
+- **[Deployment Guides](Docs/deployment/)** - Production deployment instructions
+- **[Recent Cleanup](ARCHITECTURE_CLEANUP_SUMMARY.md)** - Latest architectural improvements
 
 ---
 
